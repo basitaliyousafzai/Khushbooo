@@ -25,19 +25,22 @@ export function HeroSection({ content, featuredProducts }: HeroSectionProps) {
   const heroSecondaryCta = content.hero_secondary_cta || 'Discover The Notes';
 
   return (
-    <section className="relative min-h-[96vh] flex items-center justify-center overflow-hidden bg-obsidian py-14 lg:py-8 border-b border-gold/15">
-      {/* 3D Dynamic Animated Background System (Admin Controlled) */}
-      <DynamicBackgroundRenderer targetSection="hero" className="absolute inset-0 w-full h-full pointer-events-none z-0" />
+    <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden bg-obsidian py-12 lg:py-6 border-b border-gold/15">
+      {/* Isolated Ambient & 3D Background Container */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        {/* 3D Dynamic Animated Background System (Admin Controlled) */}
+        <DynamicBackgroundRenderer targetSection="hero" className="w-full h-full" />
 
-      {/* Decorative ambient background lights & luxury halo */}
-      <div className="absolute top-1/4 left-1/4 w-[480px] h-[480px] bg-gold/10 rounded-full blur-[160px] pointer-events-none" />
-      <div className="absolute bottom-1/3 right-1/4 w-[420px] h-[420px] bg-gold-dark/15 rounded-full blur-[140px] pointer-events-none" />
+        {/* Decorative ambient background lights & luxury halo */}
+        <div className="absolute top-1/4 left-1/4 w-[480px] h-[480px] bg-gold/10 rounded-full blur-[160px]" />
+        <div className="absolute bottom-1/3 right-1/4 w-[420px] h-[420px] bg-gold-dark/15 rounded-full blur-[140px]" />
 
-      {/* Subtle luxury geometric grid watermark */}
-      <div className="absolute inset-0 bg-[radial-gradient(#d4af37_1px,transparent_1px)] [background-size:32px_32px] opacity-[0.03] pointer-events-none" />
+        {/* Subtle luxury geometric grid watermark */}
+        <div className="absolute inset-0 bg-[radial-gradient(#d4af37_1px,transparent_1px)] [background-size:32px_32px] opacity-[0.03]" />
+      </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           
           {/* Left Column: Dynamic Hero Content */}
           <div className="lg:col-span-6 space-y-8 text-center lg:text-left">
@@ -121,8 +124,9 @@ export function HeroSection({ content, featuredProducts }: HeroSectionProps) {
 
           {/* Right Column: 3D Interactive Canvas */}
           <div className="lg:col-span-6 relative flex items-center justify-center">
-            <div className="w-full max-w-[560px]">
+            <div className="w-full max-w-[500px]">
               <PerfumeCanvas
+                className="h-[520px] md:h-[620px] w-full"
                 modelUrl={activeProduct?.model_3d_url}
                 perfumeTitle={activeProduct?.title || 'OUD ROYAL'}
                 liquidColor={

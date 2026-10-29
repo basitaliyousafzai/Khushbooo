@@ -2,7 +2,7 @@
 
 import React, { Suspense, useState, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, ContactShadows, Sparkles } from '@react-three/drei';
+import { OrbitControls, ContactShadows, Sparkles, Environment } from '@react-three/drei';
 import { PerfumeBottle3D, playLuxurySpraySound } from './PerfumeBottle3D';
 import {
   Sparkles as SparklesIcon,
@@ -160,7 +160,7 @@ export function PerfumeCanvas({
       {/* 3D WebGL Canvas */}
       <Canvas
         shadows
-        camera={{ position: [0, 0, 5.2], fov: 40 }}
+        camera={{ position: [0, 0, 6.4], fov: 38 }}
         className="w-full h-full cursor-grab active:cursor-grabbing"
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
       >
@@ -191,6 +191,9 @@ export function PerfumeCanvas({
         />
 
         <Suspense fallback={null}>
+          {/* Realistic High-End Studio Reflections & Refraction */}
+          <Environment preset="city" />
+
           {/* Floating Gold Sparkle Dust */}
           <Sparkles
             count={60}
@@ -212,7 +215,7 @@ export function PerfumeCanvas({
 
           {/* Studio Contact Shadow */}
           <ContactShadows
-            position={[0, -1.8, 0]}
+            position={[0, -1.62, 0]}
             opacity={0.85}
             scale={5.5}
             blur={2.4}

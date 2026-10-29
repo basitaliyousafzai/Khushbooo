@@ -224,7 +224,7 @@ export function DynamicBackgroundRenderer({
   return (
     <div
       ref={containerRef}
-      className={`relative w-full overflow-hidden ${className}`}
+      className={className ? className : 'relative w-full overflow-hidden'}
       style={{
         perspective: '1200px',
         perspectiveOrigin: '50% 50%',
@@ -290,9 +290,11 @@ export function DynamicBackgroundRenderer({
       </div>
 
       {/* Public Page / Section Children Content (Elevated above background at z-10) */}
-      <div className="relative z-10 w-full h-full">
-        {children}
-      </div>
+      {children && (
+        <div className="relative z-10 w-full h-full">
+          {children}
+        </div>
+      )}
     </div>
   );
 }

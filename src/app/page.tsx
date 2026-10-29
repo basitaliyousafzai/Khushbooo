@@ -24,7 +24,9 @@ export default async function HomePage() {
   return (
     <div className="flex flex-col min-h-screen bg-obsidian relative">
       {/* Global 3D Animated Background Canvas (Admin Controlled) */}
-      <DynamicBackgroundRenderer targetSection="page_background" className="fixed inset-0 pointer-events-none z-0" />
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <DynamicBackgroundRenderer targetSection="page_background" className="w-full h-full" />
+      </div>
 
       {/* 1. Dynamic Top Navigation */}
       <Navbar content={content} />

@@ -173,17 +173,17 @@ function ProceduralBottle({
 
     let targetRotY = time * 0.35;
     let targetRotX = 0;
-    let targetPosY = -0.35;
+    let targetPosY = -0.52;
 
     if (cameraPreset === 'cap') {
       targetRotX = 0.35;
-      targetPosY = -1.1;
+      targetPosY = -1.25;
     } else if (cameraPreset === 'facet') {
       targetRotY = time * 0.35 + Math.PI / 4;
       targetRotX = -0.15;
     } else if (cameraPreset === 'top') {
       targetRotX = 0.8;
-      targetPosY = -0.6;
+      targetPosY = -0.75;
     }
 
     const mouseX = state.pointer.x * 0.4;
@@ -254,14 +254,14 @@ function ProceduralBottle({
     <Float speed={2.2} rotationIntensity={0.2} floatIntensity={0.5}>
       <group
         ref={groupRef}
-        position={[0, -0.35, 0]}
+        position={[0, -0.52, 0]}
         onClick={onTriggerSpray}
       >
         {/* ================= INTERNAL CAUSTIC GLOW LIGHT ================= */}
         <pointLight
-          position={[0, -0.1, 0]}
-          intensity={2.4}
-          distance={3.0}
+          position={[0, 0, 0]}
+          intensity={3.2}
+          distance={3.5}
           color={liquidColor}
         />
 
@@ -270,46 +270,30 @@ function ProceduralBottle({
           <boxGeometry args={[1.5, 2.1, 0.9]} />
           <meshPhysicalMaterial
             roughness={0.04}
-            transmission={0.92}
-            thickness={1.3}
+            transmission={0.94}
+            thickness={0.8}
             ior={1.52}
             clearcoat={1.0}
-            clearcoatRoughness={0.04}
-            attenuationColor="#F5ECCB"
-            attenuationDistance={1.8}
+            clearcoatRoughness={0.03}
+            attenuationColor="#FFF8E7"
+            attenuationDistance={2.5}
             color="#FFFFFF"
             transparent
-            opacity={0.95}
-          />
-        </mesh>
-
-        {/* Outer Crystal Chamfer Shell */}
-        <mesh position={[0, 0, 0]}>
-          <boxGeometry args={[1.54, 2.14, 0.94]} />
-          <meshPhysicalMaterial
-            roughness={0.03}
-            transmission={0.95}
-            ior={1.56}
-            transparent
-            opacity={0.4}
-            color="#FFFFFF"
+            opacity={0.92}
           />
         </mesh>
 
         {/* ================= 2. LIQUID CORE (AMBER / GOLD / ROSE) ================= */}
         <mesh ref={liquidMeshRef} position={[0, -0.15, 0]}>
-          <boxGeometry args={[1.26, 1.65, 0.68]} />
-          <meshPhysicalMaterial
-            roughness={0.08}
-            transmission={0.78}
-            thickness={0.9}
-            ior={1.42}
+          <boxGeometry args={[1.28, 1.66, 0.7]} />
+          <meshStandardMaterial
             color={liquidColor}
-            attenuationColor={liquidColor}
-            attenuationDistance={0.8}
             emissive={liquidColor}
-            emissiveIntensity={0.24}
+            emissiveIntensity={0.42}
+            roughness={0.12}
+            metalness={0.05}
             transparent
+            opacity={0.88}
           />
         </mesh>
 
