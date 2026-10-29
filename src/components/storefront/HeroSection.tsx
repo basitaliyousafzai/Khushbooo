@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { PerfumeCanvas } from '@/components/canvas/PerfumeCanvas';
+import { DynamicBackgroundRenderer } from '@/components/canvas/DynamicBackgroundRenderer';
 import { Product, SiteContentMap } from '@/types';
 import { useCart } from '@/context/CartContext';
 import { Sparkles, ArrowRight, ShieldCheck, Flame, Compass, Award, Droplets, Waves } from 'lucide-react';
@@ -25,6 +26,9 @@ export function HeroSection({ content, featuredProducts }: HeroSectionProps) {
 
   return (
     <section className="relative min-h-[96vh] flex items-center justify-center overflow-hidden bg-obsidian py-14 lg:py-8 border-b border-gold/15">
+      {/* 3D Dynamic Animated Background System (Admin Controlled) */}
+      <DynamicBackgroundRenderer targetSection="hero" className="absolute inset-0 w-full h-full pointer-events-none z-0" />
+
       {/* Decorative ambient background lights & luxury halo */}
       <div className="absolute top-1/4 left-1/4 w-[480px] h-[480px] bg-gold/10 rounded-full blur-[160px] pointer-events-none" />
       <div className="absolute bottom-1/3 right-1/4 w-[420px] h-[420px] bg-gold-dark/15 rounded-full blur-[140px] pointer-events-none" />

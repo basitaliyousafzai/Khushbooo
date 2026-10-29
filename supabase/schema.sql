@@ -458,3 +458,35 @@ INSERT INTO product_images (product_id, image_url, is_thumbnail) VALUES
 ('a1b2c3d4-0006-4000-8000-000000000006', 'https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80', true),
 ('a1b2c3d4-0007-4000-8000-000000000007', 'https://images.unsplash.com/photo-1528722828814-77b9b83aafb2?auto=format&fit=crop&w=800&q=80', true),
 ('a1b2c3d4-0008-4000-8000-000000000008', 'https://images.unsplash.com/photo-1595425970377-c9703cf48b6d?auto=format&fit=crop&w=800&q=80', true);
+
+-- ==============================================================================
+-- 7. 3D BACKGROUND STUDIO SCENES TABLE & POLICIES
+-- ==============================================================================
+
+CREATE TABLE IF NOT EXISTS background_scenes (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    target_page TEXT DEFAULT 'home',
+    target_section TEXT DEFAULT 'hero',
+    preset TEXT DEFAULT 'cinematic-3d-parallax',
+    is_active BOOLEAN DEFAULT true,
+    is_published BOOLEAN DEFAULT true,
+    order_index INT DEFAULT 0,
+    version INT DEFAULT 1,
+    global_settings JSONB NOT NULL DEFAULT '{}'::jsonb,
+    layers JSONB NOT NULL DEFAULT '[]'::jsonb,
+    history_snapshot JSONB,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+ALTER TABLE background_scenes ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Public can view published background scenes" ON background_scenes;
+DROP POLICY IF EXISTS "Admin full access background_scenes" ON background_scenes;
+
+CREATE POLICY "Public can view published background scenes" ON background_scenes
+    FOR SELECT USING (is_published = true AND is_active = true);
+
+CREATE POLICY "Admin full access background_scenes" ON background_scenes
+    FOR ALL USING (auth.role() = 'authenticated');

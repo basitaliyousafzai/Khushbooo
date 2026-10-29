@@ -7,6 +7,7 @@ import { ProductGrid } from '@/components/storefront/ProductGrid';
 import { HeritageSection } from '@/components/storefront/HeritageSection';
 import { Footer } from '@/components/layout/Footer';
 import { LuxuryTicker } from '@/components/storefront/LuxuryTicker';
+import { DynamicBackgroundRenderer } from '@/components/canvas/DynamicBackgroundRenderer';
 
 // Revalidate every 60 seconds (or on-demand)
 export const revalidate = 60;
@@ -21,7 +22,10 @@ export default async function HomePage() {
   const featuredProducts = products.filter((p) => p.is_featured);
 
   return (
-    <div className="flex flex-col min-h-screen bg-obsidian">
+    <div className="flex flex-col min-h-screen bg-obsidian relative">
+      {/* Global 3D Animated Background Canvas (Admin Controlled) */}
+      <DynamicBackgroundRenderer targetSection="page_background" className="fixed inset-0 pointer-events-none z-0" />
+
       {/* 1. Dynamic Top Navigation */}
       <Navbar content={content} />
 

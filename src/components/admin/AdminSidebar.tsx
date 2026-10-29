@@ -38,6 +38,12 @@ export function AdminSidebar() {
       exact: false,
     },
     {
+      name: '3D Background Studio',
+      href: '/admin/background-studio',
+      icon: Layers,
+      exact: false,
+    },
+    {
       name: 'Content Manager',
       href: '/admin/content',
       icon: FileText,
