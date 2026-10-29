@@ -64,114 +64,97 @@ export function PerfumeCanvas({
       <div className="absolute inset-0 bg-gold-glow pointer-events-none opacity-50 blur-3xl" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gold/15 rounded-full blur-[100px] pointer-events-none" />
 
-      {/* TOP CONTROLS: Camera Angles & Sillage Indicator */}
-      <div className="absolute top-4 inset-x-4 z-20 flex items-center justify-between pointer-events-none">
-        
-        {/* Camera Angles Bar */}
-        <div className="pointer-events-auto flex items-center gap-1.5 p-1 rounded-2xl bg-obsidian-300/85 backdrop-blur-md border border-gold/25 shadow-lg">
-          <button
-            onClick={() => setCameraPreset('front')}
-            className={`px-3 py-1.5 rounded-xl text-[10px] uppercase tracking-wider font-sans transition-all flex items-center gap-1 ${
-              cameraPreset === 'front'
-                ? 'bg-gold text-obsidian font-bold shadow-md shadow-gold/20'
-                : 'text-champagne/70 hover:text-white'
-            }`}
-          >
-            <Camera className="w-3 h-3" />
-            <span>Studio</span>
-          </button>
-
-          <button
-            onClick={() => setCameraPreset('cap')}
-            className={`px-3 py-1.5 rounded-xl text-[10px] uppercase tracking-wider font-sans transition-all flex items-center gap-1 ${
-              cameraPreset === 'cap'
-                ? 'bg-gold text-obsidian font-bold shadow-md shadow-gold/20'
-                : 'text-champagne/70 hover:text-white'
-            }`}
-          >
-            <Eye className="w-3 h-3" />
-            <span>Cap Detail</span>
-          </button>
-
-          <button
-            onClick={() => setCameraPreset('facet')}
-            className={`px-3 py-1.5 rounded-xl text-[10px] uppercase tracking-wider font-sans transition-all flex items-center gap-1 ${
-              cameraPreset === 'facet'
-                ? 'bg-gold text-obsidian font-bold shadow-md shadow-gold/20'
-                : 'text-champagne/70 hover:text-white'
-            }`}
-          >
-            <span>Crystal 45°</span>
-          </button>
+      {/* TOP SUBTLE BADGE: 360° Interactive Studio */}
+      <div className="absolute top-4 inset-x-5 z-20 flex items-center justify-between pointer-events-none">
+        <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-obsidian-600/80 backdrop-blur-md border border-gold/20 text-[10px] uppercase tracking-[0.25em] text-champagne/80 font-sans shadow-lg">
+          <span className="w-1.5 h-1.5 rounded-full bg-gold animate-pulse" />
+          <span>Interactive 3D Flacon</span>
         </div>
 
-        {/* Live Spray Mist Sound Trigger */}
-        <button
-          onClick={handleSpray}
-          className="pointer-events-auto px-3.5 py-1.5 rounded-2xl bg-gold hover:bg-gold-300 text-obsidian text-[10px] uppercase tracking-widest font-serif font-bold transition-all shadow-md shadow-gold/20 flex items-center gap-1.5 active:scale-95"
-          title="Spray Artisanal Mist"
-        >
-          <Droplets className="w-3 h-3" />
-          <span>Spray Essence</span>
-        </button>
+        <span className="text-[10px] uppercase tracking-[0.2em] text-champagne/40 font-mono hidden sm:inline">
+          360° Rotation
+        </span>
       </div>
 
-      {/* BOTTOM CONTROLS: 3D Custom Engraving & Cap Metal Selector */}
-      <div className="absolute bottom-4 inset-x-4 z-20 flex flex-col sm:flex-row items-center justify-between gap-3 pointer-events-none">
-        
-        {/* Live 3D Engraving Input on Plaque */}
-        <div className="pointer-events-auto w-full sm:w-auto flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-obsidian-300/85 backdrop-blur-md border border-gold/25 shadow-lg">
-          <Edit3 className="w-3 h-3 text-gold shrink-0" />
-          <span className="text-[10px] uppercase tracking-wider text-champagne/60 font-sans hidden sm:inline">
-            3D Engraving:
-          </span>
-          <input
-            type="text"
-            maxLength={12}
-            placeholder="Type your name..."
-            value={engravedName}
-            onChange={(e) => setEngravedName(e.target.value)}
-            className="w-28 sm:w-32 bg-transparent text-gold font-serif text-xs focus:outline-none uppercase placeholder:text-champagne/30"
-          />
-          {engravedName && (
+      {/* BOTTOM FLOATING MINIMALIST LUXURY DOCK */}
+      <div className="absolute bottom-4 inset-x-4 z-20 flex items-center justify-center pointer-events-none">
+        <div className="pointer-events-auto flex items-center gap-3 px-4 py-2 rounded-full bg-obsidian-600/90 backdrop-blur-xl border border-gold/25 shadow-2xl shadow-black/80">
+          
+          {/* 1. Atomizer Spray Mist Trigger */}
+          <button
+            onClick={handleSpray}
+            className="px-3.5 py-1.5 rounded-full bg-gold hover:bg-gold-300 text-obsidian text-[11px] uppercase tracking-wider font-serif font-bold transition-all flex items-center gap-1.5 shadow-md shadow-gold/20 active:scale-95"
+            title="Experience the pressurized fragrance mist"
+          >
+            <Droplets className="w-3 h-3" />
+            <span>Spray Mist</span>
+          </button>
+
+          <div className="w-px h-4 bg-gold/20" />
+
+          {/* 2. Cap Metallic Finish Selector */}
+          <div className="flex items-center gap-1.5">
+            <span className="text-[9px] uppercase tracking-widest text-champagne/50 font-sans hidden md:inline mr-1">
+              Cap:
+            </span>
             <button
-              onClick={() => setEngravedName('')}
-              className="text-[10px] text-champagne/50 hover:text-red-400"
-              title="Clear engraving"
+              onClick={() => setCapFinish('gold')}
+              className={`w-5 h-5 rounded-full border transition-all ${
+                capFinish === 'gold' ? 'border-white scale-110 ring-2 ring-gold/60' : 'border-gold/30 opacity-70 hover:opacity-100'
+              }`}
+              style={{ backgroundColor: '#D4AF37' }}
+              title="24K Satin Gold"
+            />
+            <button
+              onClick={() => setCapFinish('obsidian')}
+              className={`w-5 h-5 rounded-full border transition-all ${
+                capFinish === 'obsidian' ? 'border-white scale-110 ring-2 ring-gold/60' : 'border-neutral-700 opacity-70 hover:opacity-100'
+              }`}
+              style={{ backgroundColor: '#111114' }}
+              title="Polished Obsidian"
+            />
+            <button
+              onClick={() => setCapFinish('platinum')}
+              className={`w-5 h-5 rounded-full border transition-all ${
+                capFinish === 'platinum' ? 'border-white scale-110 ring-2 ring-gold/60' : 'border-neutral-500 opacity-70 hover:opacity-100'
+              }`}
+              style={{ backgroundColor: '#D8DCE3' }}
+              title="Brushed Platinum"
+            />
+          </div>
+
+          <div className="w-px h-4 bg-gold/20" />
+
+          {/* 3. Minimal Engraving Trigger */}
+          {isEditingEngraving ? (
+            <div className="flex items-center gap-1.5">
+              <input
+                type="text"
+                maxLength={10}
+                placeholder="YOUR NAME"
+                value={engravedName}
+                autoFocus
+                onChange={(e) => setEngravedName(e.target.value)}
+                className="w-24 bg-transparent text-gold font-serif text-xs focus:outline-none uppercase placeholder:text-champagne/30"
+              />
+              <button
+                onClick={() => setIsEditingEngraving(false)}
+                className="p-1 rounded-full text-champagne/60 hover:text-gold"
+              >
+                <Check className="w-3 h-3" />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setIsEditingEngraving(true)}
+              className="text-[10px] uppercase tracking-wider text-champagne/70 hover:text-gold font-sans flex items-center gap-1 transition-colors"
             >
-              ×
+              <Edit3 className="w-3 h-3 text-gold" />
+              <span>{engravedName ? engravedName.toUpperCase() : 'Engrave'}</span>
             </button>
           )}
-        </div>
 
-        {/* Cap Metal Finishes: Gold / Obsidian / Platinum */}
-        <div className="pointer-events-auto flex items-center gap-1.5 p-1 rounded-2xl bg-obsidian-300/85 backdrop-blur-md border border-gold/25 shadow-lg">
-          <button
-            onClick={() => setCapFinish('gold')}
-            className={`w-6 h-6 rounded-full border transition-all flex items-center justify-center ${
-              capFinish === 'gold' ? 'border-gold scale-110 ring-2 ring-gold/40' : 'border-gold/30 opacity-70'
-            }`}
-            style={{ backgroundColor: '#D4AF37' }}
-            title="24K Satin Gold Cap"
-          />
-          <button
-            onClick={() => setCapFinish('obsidian')}
-            className={`w-6 h-6 rounded-full border transition-all flex items-center justify-center ${
-              capFinish === 'obsidian' ? 'border-gold scale-110 ring-2 ring-gold/40' : 'border-neutral-700 opacity-70'
-            }`}
-            style={{ backgroundColor: '#111114' }}
-            title="Polished Obsidian Black Cap"
-          />
-          <button
-            onClick={() => setCapFinish('platinum')}
-            className={`w-6 h-6 rounded-full border transition-all flex items-center justify-center ${
-              capFinish === 'platinum' ? 'border-gold scale-110 ring-2 ring-gold/40' : 'border-neutral-500 opacity-70'
-            }`}
-            style={{ backgroundColor: '#D8DCE3' }}
-            title="Brushed Platinum Cap"
-          />
         </div>
-
       </div>
 
       {/* 3D WebGL Canvas */}

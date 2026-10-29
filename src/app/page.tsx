@@ -2,9 +2,7 @@ import { getSiteContentServer } from '@/lib/data/site-content';
 import { getProductsServer } from '@/lib/data/products';
 import { Navbar } from '@/components/layout/Navbar';
 import { HeroSection } from '@/components/storefront/HeroSection';
-import { ScrollStory3D } from '@/components/storefront/ScrollStory3D';
 import { FragranceNotesScrollytelling } from '@/components/storefront/FragranceNotesScrollytelling';
-import { AlternatingProductMarquee } from '@/components/storefront/AlternatingProductMarquee';
 import { ProductGrid } from '@/components/storefront/ProductGrid';
 import { HeritageSection } from '@/components/storefront/HeritageSection';
 import { Footer } from '@/components/layout/Footer';
@@ -37,20 +35,14 @@ export default async function HomePage() {
         {/* 2.5 Luxury Haute Parfumerie Ribbon */}
         <LuxuryTicker />
 
-        {/* 2.8 Interactive 3D Scroll Journey: Perfumes & Attars with dynamic liquid morphing */}
-        <ScrollStory3D products={products} />
-
-        {/* 3. Scrollytelling Fragrance Notes Explorer */}
-        <FragranceNotesScrollytelling content={content} />
-
-        {/* 3.5 Alternating Multi-Row Product Carousel (Right to Left & Left to Right) */}
-        <AlternatingProductMarquee products={products} />
-
-        {/* 4. Product Catalogue with Real-time Stock Badges */}
+        {/* 3. Masterpiece Collection (Artisanal Perfumes & Pure Attars) */}
         <ProductGrid
           products={products}
           content={content}
         />
+
+        {/* 4. Scrollytelling Fragrance Notes Explorer */}
+        <FragranceNotesScrollytelling content={content} />
 
         {/* 5. Brand Heritage & Storytelling */}
         <HeritageSection content={content} />

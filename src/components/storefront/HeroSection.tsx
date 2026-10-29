@@ -54,8 +54,8 @@ export function HeroSection({ content, featuredProducts }: HeroSectionProps) {
               {heroDescription}
             </p>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-1">
               <a
                 href="#collection"
                 className="w-full sm:w-auto px-8 py-4 rounded-full bg-gold hover:bg-gold-300 text-obsidian font-serif font-bold text-xs uppercase tracking-[0.2em] transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-gold/25 hover:scale-[1.02]"
@@ -74,26 +74,20 @@ export function HeroSection({ content, featuredProducts }: HeroSectionProps) {
 
             {/* Interactive 3D Flacon Switcher */}
             {featuredProducts.length > 1 && (
-              <div className="pt-6 border-t border-gold/15">
-                <div className="flex items-center justify-center lg:justify-between mb-3">
-                  <p className="text-[11px] uppercase tracking-[0.25em] text-champagne/60 font-sans flex items-center gap-1.5">
-                    <Waves className="w-3.5 h-3.5 text-gold" />
-                    <span>Select 3D Flacon to Inspect:</span>
-                  </p>
-                  <span className="text-[10px] text-gold/80 font-mono hidden sm:inline">
-                    Interactive 3D Engine
-                  </span>
-                </div>
+              <div className="pt-4">
+                <p className="text-[10px] uppercase tracking-[0.25em] text-champagne/60 font-sans mb-3 text-center lg:text-left">
+                  Inspect Flacon:
+                </p>
 
-                <div className="flex flex-wrap gap-2.5 justify-center lg:justify-start">
-                  {featuredProducts.map((prod, idx) => (
+                <div className="flex flex-wrap gap-2 justify-center lg:justify-start">
+                  {featuredProducts.slice(0, 4).map((prod, idx) => (
                     <button
                       key={prod.id}
                       onClick={() => setSelectedProductIndex(idx)}
-                      className={`px-4 py-2 rounded-xl text-xs tracking-wider transition-all border font-sans ${
+                      className={`px-3.5 py-1.5 rounded-full text-[11px] tracking-wider transition-all border font-sans ${
                         selectedProductIndex === idx
-                          ? 'border-gold bg-gold/20 text-gold font-bold shadow-md shadow-gold/20 scale-105'
-                          : 'border-gold/20 text-champagne/60 hover:border-gold/40 hover:text-champagne bg-obsidian-400/40'
+                          ? 'border-gold bg-gold text-obsidian font-bold shadow-md shadow-gold/20'
+                          : 'border-gold/20 text-champagne/70 hover:border-gold/50 hover:text-white bg-obsidian-500/60'
                       }`}
                     >
                       {prod.title}
@@ -103,66 +97,37 @@ export function HeroSection({ content, featuredProducts }: HeroSectionProps) {
               </div>
             )}
 
-            {/* Live Pricing & Instant Buy Now Bar */}
-            {activeProduct && (
-              <div className="p-5 rounded-2xl bg-obsidian-400/70 border border-gold/25 backdrop-blur-md flex flex-wrap items-center justify-between gap-4 shadow-xl">
-                <div>
-                  <div className="text-[10px] uppercase tracking-widest text-champagne/50">Selected Flacon</div>
-                  <div className="font-serif text-lg text-white font-medium">{activeProduct.title}</div>
-                  <div className="flex items-center gap-2.5 mt-0.5">
-                    <span className="font-serif text-gold font-bold text-xl">
-                      Rs. {(activeProduct.discount_price || activeProduct.price).toLocaleString()}
-                    </span>
-                    {activeProduct.discount_price && (
-                      <span className="text-xs text-champagne/40 line-through">
-                        Rs. {activeProduct.price.toLocaleString()}
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2.5">
-                  <button
-                    onClick={() => addToCart(activeProduct)}
-                    className="px-5 py-2.5 rounded-full border border-gold/30 hover:border-gold text-champagne text-xs uppercase tracking-wider transition-all bg-obsidian-300/40 hover:bg-gold/10 font-sans"
-                  >
-                    Add to Bag
-                  </button>
-                  <button
-                    onClick={() => buyNow(activeProduct)}
-                    className="px-5 py-2.5 rounded-full bg-gold hover:bg-gold-300 text-obsidian text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-gold/20 font-serif"
-                  >
-                    Instant COD
-                  </button>
-                </div>
+            {/* Sleek Prestige Hallmarks */}
+            <div className="pt-6 grid grid-cols-3 gap-4 border-t border-gold/15 text-center lg:text-left">
+              <div>
+                <div className="font-serif text-sm text-gold font-bold">100% Uncut</div>
+                <div className="text-[10px] uppercase tracking-wider text-champagne/50">Pure Attar Oils</div>
               </div>
-            )}
+              <div>
+                <div className="font-serif text-sm text-gold font-bold">35% Extrait</div>
+                <div className="text-[10px] uppercase tracking-wider text-champagne/50">Haute Parfumerie</div>
+              </div>
+              <div>
+                <div className="font-serif text-sm text-gold font-bold">Free Shipping</div>
+                <div className="text-[10px] uppercase tracking-wider text-champagne/50">Nationwide COD</div>
+              </div>
+            </div>
+
           </div>
 
           {/* Right Column: 3D Interactive Canvas */}
           <div className="lg:col-span-6 relative flex items-center justify-center">
-            
-            {/* Top Badge: Sillage & Longevity */}
-            <div className="absolute top-4 left-4 z-20 hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-obsidian-400/90 border border-gold/30 text-[10px] uppercase tracking-wider text-champagne backdrop-blur-md">
-              <Award className="w-3.5 h-3.5 text-gold" />
-              <span>12+ Hours Sillage Guarantee</span>
-            </div>
-
-            {/* Bottom Badge: Hand Poured */}
-            <div className="absolute bottom-4 right-4 z-20 hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-obsidian-400/90 border border-gold/30 text-[10px] uppercase tracking-wider text-champagne backdrop-blur-md">
-              <Droplets className="w-3.5 h-3.5 text-gold" />
-              <span>Hand-Poured & Wax-Sealed</span>
-            </div>
-
-            <div className="w-full max-w-[580px]">
+            <div className="w-full max-w-[560px]">
               <PerfumeCanvas
                 modelUrl={activeProduct?.model_3d_url}
                 perfumeTitle={activeProduct?.title || 'OUD ROYAL'}
                 liquidColor={
                   selectedProductIndex === 1
-                    ? '#E8C15A' // Soleil Doré (Golden Amber)
+                    ? '#8C531B' // Dehn Al Oud (Rich Aged Amber)
                     : selectedProductIndex === 2
-                    ? '#8C6239' // Nocturne Ébène (Smoked Obsidian)
+                    ? '#E8C15A' // Soleil Doré (Warm Honey)
+                    : selectedProductIndex === 3
+                    ? '#5C381E' // Kasturi Musk (Dark Silken Amber)
                     : '#D4AF37' // Oud Royal (Imperial Gold)
                 }
               />

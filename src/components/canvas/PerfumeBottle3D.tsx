@@ -373,9 +373,9 @@ function ProceduralBottle({
             color="#D4AF37"
             anchorX="center"
             anchorY="middle"
-            letterSpacing={0.16}
+            letterSpacing={0.22}
           >
-            MAISON DE PARFUM
+            KHUSHBOOO
           </Text>
 
           <Text
