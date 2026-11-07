@@ -1,9 +1,15 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Cinzel, Montserrat } from 'next/font/google';
 import './globals.css';
 import { CartProvider } from '@/context/CartContext';
 import { CartDrawer } from '@/components/storefront/CartDrawer';
 import { CheckoutModal } from '@/components/storefront/CheckoutModal';
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+};
 
 const cinzel = Cinzel({
   subsets: ['latin'],

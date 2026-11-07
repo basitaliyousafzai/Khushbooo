@@ -7,11 +7,21 @@
   --foreground: #f5eccb;
 }
 
+html {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
+  width: 100%;
+  max-width: 100%;
   color: var(--foreground);
   background: var(--background);
   font-family: var(--font-montserrat), system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
+  position: relative;
 }
 
 /* Custom Luxury Scrollbar */
@@ -70,6 +80,14 @@ body {
 .animate-marquee-rtl:hover,
 .animate-marquee-ltr:hover {
   animation-play-state: paused !important;
+}
+
+.marquee-container {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  contain: paint;
 }
 .text-gold-gradient {
   background: linear-gradient(135deg, #f5eccb 0%, #d4af37 50%, #9a7b1c 100%);

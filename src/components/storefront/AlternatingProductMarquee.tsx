@@ -57,7 +57,7 @@ export function AlternatingProductMarquee({ products }: AlternatingProductMarque
     return (
       <div
         key={`${product.id}-${index}`}
-        className="w-[260px] sm:w-[280px] shrink-0 rounded-2xl bg-obsidian-300/90 border border-gold/20 hover:border-gold/60 transition-all duration-300 p-3 sm:p-4 flex flex-col justify-between group/card select-none shadow-xl hover:shadow-2xl hover:shadow-gold/10 hover:-translate-y-1.5"
+        className="w-[210px] sm:w-[260px] md:w-[280px] shrink-0 rounded-2xl bg-obsidian-300/90 border border-gold/20 hover:border-gold/60 transition-all duration-300 p-3 sm:p-4 flex flex-col justify-between group/card select-none shadow-xl hover:shadow-2xl hover:shadow-gold/10 hover:-translate-y-1.5"
       >
         {/* Top Badges & Wishlist */}
         <div className="relative aspect-[4/5] w-full rounded-xl overflow-hidden bg-obsidian-500 mb-3">
@@ -161,7 +161,7 @@ export function AlternatingProductMarquee({ products }: AlternatingProductMarque
   };
 
   return (
-    <section className="py-14 sm:py-20 bg-obsidian-600 border-b border-gold/15 relative overflow-hidden">
+    <section className="py-14 sm:py-20 bg-obsidian-600 border-b border-gold/15 relative overflow-hidden w-full max-w-full min-w-0">
       {/* Background radial glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-gold/5 rounded-full blur-[160px] pointer-events-none" />
 
@@ -179,24 +179,24 @@ export function AlternatingProductMarquee({ products }: AlternatingProductMarque
       </div>
 
       {/* 3 Animated Alternating Scrolling Marquee Rows (RTL -> LTR -> RTL) */}
-      <div className="space-y-4 sm:space-y-6">
+      <div className="space-y-4 sm:space-y-6 w-full max-w-full overflow-hidden">
         
         {/* ROW 1: Right to Left (Pure Concentrated Attars) */}
-        <div className="relative w-full overflow-hidden">
+        <div className="marquee-container">
           <div className="animate-marquee-rtl flex gap-4 sm:gap-6">
             {row1Items.map((prod, idx) => renderProductCard(prod, idx))}
           </div>
         </div>
 
         {/* ROW 2: Left to Right (Haute Parfumerie Extraits) */}
-        <div className="relative w-full overflow-hidden">
+        <div className="marquee-container">
           <div className="animate-marquee-ltr flex gap-4 sm:gap-6">
             {row2Items.map((prod, idx) => renderProductCard(prod, idx))}
           </div>
         </div>
 
         {/* ROW 3: Right to Left (Signature Highlights) */}
-        <div className="relative w-full overflow-hidden">
+        <div className="marquee-container">
           <div className="animate-marquee-rtl flex gap-4 sm:gap-6">
             {row3Items.map((prod, idx) => renderProductCard(prod, idx))}
           </div>

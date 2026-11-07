@@ -71,7 +71,7 @@ export function ProductGrid({ products, content }: ProductGridProps) {
         </div>
 
         {/* Product Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {filteredProducts.map((product) => {
             const isSoldOut = product.stock_quantity <= 0;
             const isLowStock = product.stock_quantity > 0 && product.stock_quantity <= 5;

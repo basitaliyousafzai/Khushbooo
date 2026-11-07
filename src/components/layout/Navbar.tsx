@@ -50,14 +50,14 @@ export function Navbar({ content }: NavbarProps) {
 
       {/* 2. Main Site Header (Template 09 Layout) */}
       <header className="sticky top-0 z-40 w-full backdrop-blur-xl bg-obsidian-500/95 border-b border-gold/15">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
           
           {/* Left: Clean "Categories" Sidebar Button */}
           <div className="flex-1 flex items-center">
             <button
               type="button"
               onClick={() => setIsSidebarOpen(true)}
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full border border-gold/30 hover:border-gold text-champagne hover:text-white bg-obsidian-400/80 hover:bg-obsidian-300 transition-all text-xs uppercase tracking-widest font-sans shadow-md"
+              className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-full border border-gold/30 hover:border-gold text-champagne hover:text-white bg-obsidian-400/80 hover:bg-obsidian-300 transition-all text-[11px] sm:text-xs uppercase tracking-widest font-sans shadow-md"
               title="Browse Categories & Collections"
             >
               <Menu className="w-4 h-4 text-gold" />
@@ -69,40 +69,40 @@ export function Navbar({ content }: NavbarProps) {
           <div className="flex-1 text-center">
             <Link
               href="/"
-              className="inline-flex items-center justify-center gap-2.5 text-decoration-none group"
+              className="inline-flex items-center justify-center gap-1.5 sm:gap-2.5 text-decoration-none group"
             >
-              <Crown className="w-5 h-5 text-gold group-hover:scale-110 transition-transform" />
-              <span className="font-serif text-2xl sm:text-3xl font-bold tracking-[0.2em] text-white uppercase group-hover:text-gold transition-colors">
+              <Crown className="w-4 h-4 sm:w-5 sm:h-5 text-gold group-hover:scale-110 transition-transform" />
+              <span className="font-serif text-lg sm:text-2xl lg:text-3xl font-bold tracking-[0.12em] sm:tracking-[0.2em] text-white uppercase group-hover:text-gold transition-colors truncate">
                 {siteName}
               </span>
             </Link>
           </div>
 
           {/* Right Action Icons: Search, Admin/Account, Wishlist, Cart */}
-          <div className="flex-1 flex items-center justify-end gap-2 sm:gap-3">
+          <div className="flex-1 flex items-center justify-end gap-1.5 sm:gap-3">
             {/* Search Toggle Button */}
             <button
               type="button"
               onClick={() => setIsSearchOpen(!isSearchOpen)}
-              className="w-10 h-10 rounded-full border border-gold/20 hover:border-gold text-champagne hover:text-gold bg-obsidian-400/60 flex items-center justify-center transition-all"
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-gold/20 hover:border-gold text-champagne hover:text-gold bg-obsidian-400/60 flex items-center justify-center transition-all"
               title="Search fragrances and attars"
             >
-              <Search className="w-4 h-4" />
+              <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
 
-            {/* Admin / Account Portal */}
+            {/* Admin / Account Portal (Hidden on mobile; accessible via Categories drawer) */}
             <Link
               href="/admin"
-              className="w-10 h-10 rounded-full border border-gold/20 hover:border-gold text-champagne hover:text-gold bg-obsidian-400/60 flex items-center justify-center transition-all"
+              className="hidden md:flex w-10 h-10 rounded-full border border-gold/20 hover:border-gold text-champagne hover:text-gold bg-obsidian-400/60 items-center justify-center transition-all"
               title="Admin Portal"
             >
               <Lock className="w-4 h-4" />
             </Link>
 
-            {/* Wishlist Link */}
+            {/* Wishlist Link (Hidden on mobile; accessible via bottom dock) */}
             <a
               href="#collection"
-              className="relative w-10 h-10 rounded-full border border-gold/20 hover:border-gold text-champagne hover:text-gold bg-obsidian-400/60 flex items-center justify-center transition-all"
+              className="hidden sm:flex relative w-10 h-10 rounded-full border border-gold/20 hover:border-gold text-champagne hover:text-gold bg-obsidian-400/60 items-center justify-center transition-all"
               title="My Wishlist"
             >
               <Heart className="w-4 h-4" />
@@ -112,12 +112,12 @@ export function Navbar({ content }: NavbarProps) {
             <button
               type="button"
               onClick={() => setIsCartOpen(true)}
-              className="relative w-10 h-10 rounded-full border border-gold/30 hover:border-gold text-champagne hover:text-gold bg-obsidian-400/90 flex items-center justify-center transition-all shadow-md group"
+              className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-gold/30 hover:border-gold text-champagne hover:text-gold bg-obsidian-400/90 flex items-center justify-center transition-all shadow-md group"
               title="Shopping Bag"
             >
-              <ShoppingBag className="w-4 h-4 group-hover:scale-110 transition-transform" />
+              <ShoppingBag className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:scale-110 transition-transform" />
               {totalItems > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-gold text-obsidian font-bold text-[10px] flex items-center justify-center shadow-lg shadow-gold/20 animate-pulse">
+                <span className="absolute -top-1 -right-1 w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-gold text-obsidian font-bold text-[9px] sm:text-[10px] flex items-center justify-center shadow-lg shadow-gold/20 animate-pulse">
                   {totalItems}
                 </span>
               )}

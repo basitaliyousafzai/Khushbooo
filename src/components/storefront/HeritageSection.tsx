@@ -33,7 +33,7 @@ export function HeritageSection({ content }: HeritageSectionProps) {
             </div>
 
             {/* Overlapping Floating Badge */}
-            <div className="absolute -bottom-6 -right-4 sm:right-6 p-5 rounded-2xl bg-obsidian-300/90 border border-gold/40 shadow-2xl backdrop-blur-md max-w-xs">
+            <div className="absolute -bottom-6 right-2 sm:right-6 p-4 sm:p-5 rounded-2xl bg-obsidian-300/90 border border-gold/40 shadow-2xl backdrop-blur-md max-w-[280px] sm:max-w-xs">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-gold/15 border border-gold flex items-center justify-center text-gold shrink-0">
                   <Award className="w-5 h-5" />

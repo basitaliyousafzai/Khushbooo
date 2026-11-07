@@ -25,7 +25,7 @@ export default async function HomePage() {
   const featuredProducts = products.filter((p) => p.is_featured);
 
   return (
-    <div className="flex flex-col min-h-screen bg-obsidian relative pb-14 lg:pb-0">
+    <div className="flex flex-col min-h-screen bg-obsidian relative pb-16 lg:pb-0 w-full max-w-full overflow-x-hidden">
       {/* Global 3D Animated Background Canvas (Admin Controlled) */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <DynamicBackgroundRenderer targetSection="page_background" className="w-full h-full" />
@@ -34,7 +34,7 @@ export default async function HomePage() {
       {/* 1. Haute Parfumerie Top Navigation */}
       <Navbar content={content} />
 
-      <main className="flex-1">
+      <main className="flex-1 w-full min-w-0 max-w-full overflow-x-hidden">
         {/* 2. 3D Interactive Centerpiece Hero */}
         <HeroSection
           content={content}
