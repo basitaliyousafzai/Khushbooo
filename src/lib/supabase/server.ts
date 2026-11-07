@@ -21,5 +21,16 @@ export function createSupabaseServerClient(): SupabaseClient {
       persistSession: false,
       autoRefreshToken: false,
     },
+    global: {
+      fetch: (input: RequestInfo | URL, init?: RequestInit) => {
+        // 3-second timeout so page renders instantly from curated data if remote project is paused
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2500);
+        return fetch(input, {
+          ...init,
+          signal: controller.signal,
+        }).finally(() => clearTimeout(timeoutId));
+      },
+    },
   });
 }

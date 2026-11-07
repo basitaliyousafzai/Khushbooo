@@ -28,7 +28,7 @@ export function TrustPropositionsBar() {
   ];
 
   return (
-    <section className="bg-obsidian-400/90 border-y border-gold/15 py-5 relative z-10 backdrop-blur-md">
+    <section className="bg-[#12100E] border-y border-gold/15 py-6 relative z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-4 divide-y sm:divide-y-0 sm:divide-x divide-gold/10">
           {items.map((item, idx) => {
@@ -36,11 +36,11 @@ export function TrustPropositionsBar() {
             return (
               <div
                 key={idx}
-                className={`flex items-center gap-3.5 ${
+                className={`flex items-center gap-4 ${
                   idx > 0 ? 'pt-4 sm:pt-0 sm:pl-4 lg:pl-6' : ''
                 }`}
               >
-                <div className="w-11 h-11 rounded-full bg-gold/10 border border-gold/25 flex items-center justify-center shrink-0 text-gold shadow-md shadow-gold/5">
+                <div className="w-12 h-12 rounded-full bg-gold/10 border border-gold/25 flex items-center justify-center shrink-0 text-gold shadow-md shadow-gold/5">
                   <Icon className="w-5 h-5" />
                 </div>
                 <div>

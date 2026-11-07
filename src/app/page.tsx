@@ -9,7 +9,6 @@ import { FragranceNotesScrollytelling } from '@/components/storefront/FragranceN
 import { ProductGrid } from '@/components/storefront/ProductGrid';
 import { HeritageSection } from '@/components/storefront/HeritageSection';
 import { Footer } from '@/components/layout/Footer';
-import { LuxuryTicker } from '@/components/storefront/LuxuryTicker';
 import { MobileStickyDock } from '@/components/storefront/MobileStickyDock';
 import { DynamicBackgroundRenderer } from '@/components/canvas/DynamicBackgroundRenderer';
 
@@ -32,38 +31,35 @@ export default async function HomePage() {
         <DynamicBackgroundRenderer targetSection="page_background" className="w-full h-full" />
       </div>
 
-      {/* 1. Dynamic Top Navigation (Template 09 Layout with Categories Drawer) */}
+      {/* 1. Haute Parfumerie Top Navigation */}
       <Navbar content={content} />
 
       <main className="flex-1">
-        {/* 2. 3D Interactive Sticky Hero */}
+        {/* 2. 3D Interactive Centerpiece Hero */}
         <HeroSection
           content={content}
           featuredProducts={featuredProducts.length > 0 ? featuredProducts : products}
         />
 
-        {/* 3. Trust / Value Propositions Bar (4-Grid Icon Bar) */}
+        {/* 3. Prestige Trust & Craftsmanship Bar */}
         <TrustPropositionsBar />
 
-        {/* 4. 3 Animated Alternating Scrolling Marquee Rows (RTL -> LTR -> RTL) */}
+        {/* 4. Curated Runway Showcase: 3 Smooth Alternating Rows (RTL -> LTR -> RTL) */}
         <AlternatingProductMarquee products={products} />
 
-        {/* 4.5 Luxury Haute Parfumerie Ticker */}
-        <LuxuryTicker />
-
-        {/* 5. Dual Promotional Split Showcase (Crafted for Excellence + Discovery Collection) */}
+        {/* 5. Editorial Heritage Split Cards */}
         <PromoSplitShowcase />
 
-        {/* 6. Masterpiece Collection (Artisanal Perfumes & Pure Attars Catalog) */}
+        {/* 6. Complete Masterpiece Catalogue & Type Filters */}
         <ProductGrid
           products={products}
           content={content}
         />
 
-        {/* 7. Scrollytelling Fragrance Notes Explorer */}
+        {/* 7. Scrollytelling 3-Tier Olfactory Notes Explorer */}
         <FragranceNotesScrollytelling content={content} />
 
-        {/* 8. Brand Heritage & Atelier Storytelling */}
+        {/* 8. Atelier Distillation & Heritage Story */}
         <HeritageSection content={content} />
       </main>
 
