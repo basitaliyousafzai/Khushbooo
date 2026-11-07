@@ -29,6 +29,17 @@ export function getSupabaseBrowserClient(): SupabaseClient {
       autoRefreshToken: true,
       detectSessionInUrl: true,
     },
+    global: {
+      fetch: (input: RequestInfo | URL, init?: RequestInit) => {
+        // Fast timeout so client never crashes or hangs if Supabase is offline/paused
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2500);
+        return fetch(input, {
+          ...init,
+          signal: controller.signal,
+        }).finally(() => clearTimeout(timeoutId));
+      },
+    },
   });
 
   return browserClient;

@@ -214,7 +214,8 @@ export async function getBackgroundScenes(): Promise<BackgroundScene[]> {
     const { data, error } = await supabase
       .from('background_scenes')
       .select('*')
-      .order('order_index', { ascending: true });
+      .order('order_index', { ascending: true })
+      .throwOnError();
 
     if (error || !data || data.length === 0) {
       return DEFAULT_BACKGROUND_SCENES;
@@ -222,6 +223,7 @@ export async function getBackgroundScenes(): Promise<BackgroundScene[]> {
 
     return data as BackgroundScene[];
   } catch (err) {
+    // Graceful offline fallback to curated luxury starter scenes
     return DEFAULT_BACKGROUND_SCENES;
   }
 }
