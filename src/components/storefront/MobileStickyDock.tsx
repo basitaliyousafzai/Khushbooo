@@ -2,14 +2,14 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Home, Grid, Search, Heart, ShoppingBag } from 'lucide-react';
+import { Home, Grid, Package, Heart, ShoppingBag } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 
 export function MobileStickyDock() {
   const { totalItems, setIsCartOpen } = useCart();
 
   return (
-    <div className="fixed bottom-0 inset-x-0 z-40 lg:hidden bg-obsidian-500/95 backdrop-blur-xl border-t border-gold/20 py-2 px-6 shadow-2xl">
+    <div className="fixed bottom-0 inset-x-0 z-40 lg:hidden bg-obsidian-500/95 backdrop-blur-xl border-t border-gold/20 py-2 px-4 shadow-2xl">
       <div className="flex items-center justify-between max-w-md mx-auto">
         <Link
           href="/"
@@ -27,13 +27,13 @@ export function MobileStickyDock() {
           <span className="text-[10px] uppercase font-sans tracking-wider">Catalog</span>
         </a>
 
-        <a
-          href="#collection"
+        <Link
+          href="/track"
           className="flex flex-col items-center gap-1 text-champagne/70 hover:text-gold transition-colors"
         >
-          <Heart className="w-4 h-4" />
-          <span className="text-[10px] uppercase font-sans tracking-wider">Wishlist</span>
-        </a>
+          <Package className="w-4 h-4" />
+          <span className="text-[10px] uppercase font-sans tracking-wider">Track</span>
+        </Link>
 
         <button
           onClick={() => setIsCartOpen(true)}

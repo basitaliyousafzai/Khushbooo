@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, CheckCircle2, ShieldCheck, Truck, Sparkles, Printer, ArrowRight, Loader2 } from 'lucide-react';
+import Link from 'next/link';
+import { X, CheckCircle2, ShieldCheck, Truck, Sparkles, Printer, ArrowRight, Loader2, Package, Copy, Check } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
-import { placeOrder } from '@/lib/data/orders';
+import { placeOrder, formatOrderTrackingId } from '@/lib/data/orders';
 import confetti from 'canvas-confetti';
 
 export function CheckoutModal() {
@@ -18,6 +19,7 @@ export function CheckoutModal() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [copiedTrackId, setCopiedTrackId] = useState(false);
   const [placedOrder, setPlacedOrder] = useState<{
     order_id: string;
     order_number: number;
@@ -117,7 +119,15 @@ export function CheckoutModal() {
         </button>
 
         {/* ================= ORDER SUCCESS STATE ================= */}
-        {placedOrder ? (
+        {placedOrder ? (() => {
+          const trackingId = formatOrderTrackingId(placedOrder.order_number);
+          const copyTrackingId = () => {
+            navigator.clipboard.writeText(trackingId).catch(() => {});
+            setCopiedTrackId(true);
+            setTimeout(() => setCopiedTrackId(false), 2000);
+          };
+
+          return (
           <div className="text-center space-y-6 py-6 print:p-0">
             <div className="w-16 h-16 rounded-full bg-gold/15 border border-gold flex items-center justify-center text-gold mx-auto shadow-lg shadow-gold/20">
               <CheckCircle2 className="w-10 h-10" />
@@ -135,17 +145,51 @@ export function CheckoutModal() {
               </p>
             </div>
 
+            {/* Prominent Tracking ID Card */}
+            <div className="p-5 rounded-2xl bg-obsidian-500/90 border-2 border-gold/40 max-w-sm mx-auto space-y-3">
+              <div className="text-[10px] uppercase tracking-widest text-champagne/50 font-sans">
+                Your Tracking Number
+              </div>
+              <div className="flex items-center justify-center gap-3">
+                <span className="font-serif text-2xl sm:text-3xl text-gold font-bold tracking-[0.1em]">
+                  {trackingId}
+                </span>
+                <button
+                  type="button"
+                  onClick={copyTrackingId}
+                  className="p-2 rounded-full bg-obsidian-400 border border-gold/30 hover:border-gold text-champagne hover:text-gold transition-all"
+                  title="Copy tracking number"
+                >
+                  {copiedTrackId ? (
+                    <Check className="w-4 h-4 text-emerald-400" />
+                  ) : (
+                    <Copy className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
+              <p className="text-[11px] text-champagne/50 font-sans">
+                Save this number — use it anytime to check your delivery status
+              </p>
+              <Link
+                href={`/track`}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gold/15 border border-gold/40 hover:bg-gold hover:text-obsidian text-gold font-serif text-xs uppercase tracking-[0.15em] transition-all"
+              >
+                <Package className="w-3.5 h-3.5" />
+                <span>Track My Order</span>
+              </Link>
+            </div>
+
             {/* Order Slip Card */}
             <div className="p-6 rounded-2xl bg-obsidian-500/80 border border-gold/25 text-left space-y-4 max-w-lg mx-auto">
               <div className="flex justify-between items-center pb-3 border-b border-gold/15">
                 <span className="text-xs text-champagne/60 uppercase tracking-widest">Order Reference</span>
                 <span className="font-serif text-lg text-gold font-bold">
-                  #{placedOrder.order_number}
+                  {trackingId}
                 </span>
               </div>
 
               <div className="space-y-2 text-xs font-sans">
-                {placedOrder.items.map((item, idx) => (
+                {placedOrder.items.map((item: any, idx: number) => (
                   <div key={idx} className="flex justify-between text-champagne/80">
                     <span>{item.quantity}x {item.product.title}</span>
                     <span className="text-white">
@@ -189,7 +233,8 @@ export function CheckoutModal() {
               </button>
             </div>
           </div>
-        ) : (
+          );
+        })() : (
           /* ================= CASH ON DELIVERY CHECKOUT FORM ================= */
           <form onSubmit={handleSubmitOrder} className="space-y-6">
             

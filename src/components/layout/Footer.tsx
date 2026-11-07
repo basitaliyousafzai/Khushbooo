@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { Mail, Phone, Shield, Truck, Award, Sparkles, MessageCircle } from 'lucide-react';
+import { Mail, Phone, Shield, Truck, Award, Sparkles, MessageCircle, Package } from 'lucide-react';
 import { SiteContentMap } from '@/types';
 
 interface FooterProps {
@@ -158,6 +158,12 @@ export function Footer({ content }: FooterProps) {
                 <a href="#notes-explorer" className="hover:text-gold transition-colors">
                   Olfactory Pyramid
                 </a>
+              </li>
+              <li>
+                <Link href="/track" className="hover:text-gold transition-colors flex items-center gap-1.5">
+                  <Package className="w-3.5 h-3.5 text-gold" />
+                  <span>Track My Order</span>
+                </Link>
               </li>
               <li>
                 <Link href="/admin" className="text-gold/90 hover:text-gold hover:underline flex items-center gap-1">

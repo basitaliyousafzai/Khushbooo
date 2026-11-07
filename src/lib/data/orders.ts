@@ -261,6 +261,100 @@ export async function updateOrderStatus(
 }
 
 /**
+ * Format order number for display: KHB-0042
+ */
+export function formatOrderTrackingId(orderNumber: number): string {
+  return `KHB-${String(orderNumber).padStart(4, '0')}`;
+}
+
+/**
+ * Public Order Tracking — lookup by order number + last 4 digits of phone
+ * Used on the /track page for customers to check their delivery status
+ */
+export async function trackOrder(
+  orderNumber: number,
+  phoneLast4: string
+): Promise<{
+  found: boolean;
+  order?: {
+    order_number: number;
+    tracking_id: string;
+    customer_name: string;
+    city: string;
+    total_amount: number;
+    status: string;
+    courier_name: string | null;
+    courier_tracking_id: string | null;
+    dispatched_at: string | null;
+    created_at: string;
+    items: { product_title: string; quantity: number; unit_price: number }[];
+  };
+  error?: string;
+}> {
+  // Fallback demo tracking for when Supabase is offline
+  if (!isSupabaseConfigured()) {
+    const match = FALLBACK_ORDERS.find((o) => o.order_number === orderNumber);
+    if (match && match.customer_phone.endsWith(phoneLast4)) {
+      return {
+        found: true,
+        order: {
+          order_number: match.order_number,
+          tracking_id: formatOrderTrackingId(match.order_number),
+          customer_name: match.customer_name,
+          city: match.city,
+          total_amount: Number(match.total_amount),
+          status: match.status,
+          courier_name: match.courier_name || null,
+          courier_tracking_id: match.courier_tracking_id || null,
+          dispatched_at: match.dispatched_at || null,
+          created_at: match.created_at,
+          items: match.items || [],
+        },
+      };
+    }
+    return { found: false, error: 'No order found. Please check your order number and phone digits.' };
+  }
+
+  try {
+    const supabase = getSupabaseBrowserClient();
+
+    const { data, error } = await supabase
+      .from('orders')
+      .select('*, order_items(*)')
+      .eq('order_number', orderNumber)
+      .ilike('customer_phone', `%${phoneLast4}`)
+      .single();
+
+    if (error || !data) {
+      return { found: false, error: 'No order found. Please check your order number and phone digits.' };
+    }
+
+    return {
+      found: true,
+      order: {
+        order_number: data.order_number,
+        tracking_id: formatOrderTrackingId(data.order_number),
+        customer_name: data.customer_name,
+        city: data.city,
+        total_amount: Number(data.total_amount),
+        status: data.status,
+        courier_name: data.courier_name || null,
+        courier_tracking_id: data.courier_tracking_id || null,
+        dispatched_at: data.dispatched_at || null,
+        created_at: data.created_at,
+        items: (data.order_items || []).map((item: any) => ({
+          product_title: item.product_title,
+          quantity: item.quantity,
+          unit_price: Number(item.unit_price),
+        })),
+      },
+    };
+  } catch (err: any) {
+    return { found: false, error: err.message || 'Could not look up order.' };
+  }
+}
+
+/**
  * Admin Analytics Overview Summary
  */
 export async function getAdminAnalytics(): Promise<{

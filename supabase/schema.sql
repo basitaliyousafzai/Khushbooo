@@ -105,6 +105,14 @@ CREATE POLICY "Public can view product images" ON product_images FOR SELECT USIN
 CREATE POLICY "Public can insert orders" ON orders FOR INSERT WITH CHECK (true);
 CREATE POLICY "Public can insert order items" ON order_items FOR INSERT WITH CHECK (true);
 
+-- Public order tracking: allow anonymous SELECT on orders table (customers look up by order_number + phone)
+DROP POLICY IF EXISTS "Public can view own orders" ON orders;
+CREATE POLICY "Public can view own orders" ON orders FOR SELECT USING (true);
+
+-- Public order tracking: allow anonymous SELECT on order_items for looked-up orders
+DROP POLICY IF EXISTS "Public can view own order items" ON order_items;
+CREATE POLICY "Public can view own order items" ON order_items FOR SELECT USING (true);
+
 -- Authenticated Admin Full Access
 CREATE POLICY "Admin full access site_content" ON site_content FOR ALL USING (auth.role() = 'authenticated');
 CREATE POLICY "Admin full access products" ON products FOR ALL USING (auth.role() = 'authenticated');

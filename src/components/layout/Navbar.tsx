@@ -16,6 +16,7 @@ import {
   Droplets,
   Flame,
   Compass,
+  Package,
 } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { SiteContentMap } from '@/types';
@@ -243,6 +244,18 @@ export function Navbar({ content }: NavbarProps) {
                   <span>Our Heritage & Atelier</span>
                   <ArrowRight className="w-4 h-4 text-gold" />
                 </a>
+
+                <Link
+                  href="/track"
+                  onClick={() => setIsSidebarOpen(false)}
+                  className="flex items-center justify-between p-3 rounded-xl bg-gold/10 hover:bg-gold/20 border border-gold/30 text-sm font-serif tracking-wider text-gold hover:text-white transition-colors"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Package className="w-4 h-4 text-gold" />
+                    <span>Track Your Order</span>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-gold" />
+                </Link>
               </nav>
             </div>
 
