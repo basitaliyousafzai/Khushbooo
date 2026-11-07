@@ -34,7 +34,43 @@ body {
   background: #d4af37;
 }
 
-/* Gold Gradient Utilities */
+/* Infinite Scrolling Product Marquee Keyframes & Utilities */
+@keyframes marqueeScrollRTL {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes marqueeScrollLTR {
+  0% {
+    transform: translate3d(-50%, 0, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.animate-marquee-rtl {
+  display: flex !important;
+  width: max-content !important;
+  animation: marqueeScrollRTL 35s linear infinite !important;
+  will-change: transform;
+}
+
+.animate-marquee-ltr {
+  display: flex !important;
+  width: max-content !important;
+  animation: marqueeScrollLTR 35s linear infinite !important;
+  will-change: transform;
+}
+
+.animate-marquee-rtl:hover,
+.animate-marquee-ltr:hover {
+  animation-play-state: paused !important;
+}
 .text-gold-gradient {
   background: linear-gradient(135deg, #f5eccb 0%, #d4af37 50%, #9a7b1c 100%);
   -webkit-background-clip: text;

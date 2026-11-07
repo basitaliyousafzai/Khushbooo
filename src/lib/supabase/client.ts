@@ -32,16 +32,11 @@ export function getSupabaseBrowserClient(): SupabaseClient {
     global: {
       fetch: async (input: RequestInfo | URL, init?: RequestInit) => {
         try {
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 2000);
-          return await fetch(input, {
-            ...init,
-            signal: controller.signal,
-          }).finally(() => clearTimeout(timeoutId));
+          return await fetch(input, init);
         } catch (e) {
-          // Return an empty 503 response instead of throwing uncaught promise rejection in browser
+          // If remote database is paused or unreachable, return a quiet empty 200 payload
           return new Response(JSON.stringify([]), {
-            status: 503,
+            status: 200,
             headers: { 'Content-Type': 'application/json' },
           });
         }
