@@ -268,7 +268,7 @@ export function DynamicBackgroundRenderer({
                     src={layer.image_url}
                     alt={layer.name || 'Animated Background Layer'}
                     fill
-                    sizes="100vw"
+                    sizes="(max-width: 1200px) 100vw, 1200px"
                     priority={layer.depth < 0} // Prioritize background layers
                     className={`object-contain transition-all duration-300 ${
                       layer.layer_type === 'background' ? 'object-cover' : 'object-contain'
