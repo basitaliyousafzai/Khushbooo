@@ -28,26 +28,26 @@ export function TrustPropositionsBar() {
   ];
 
   return (
-    <section className="bg-[#12100E] border-y border-gold/15 py-6 relative z-10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-4 divide-y sm:divide-y-0 sm:divide-x divide-gold/10">
+    <section className="bg-[#12100E] border-y border-gold/15 py-4 sm:py-6 relative z-10">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 divide-y-0 sm:divide-x divide-gold/10">
           {items.map((item, idx) => {
             const Icon = item.icon;
             return (
               <div
                 key={idx}
-                className={`flex items-center gap-4 ${
-                  idx > 0 ? 'pt-4 sm:pt-0 sm:pl-4 lg:pl-6' : ''
+                className={`flex items-center gap-2.5 sm:gap-4 ${
+                  idx > 0 ? 'sm:pl-4 lg:pl-6' : ''
                 }`}
               >
-                <div className="w-12 h-12 rounded-full bg-gold/10 border border-gold/25 flex items-center justify-center shrink-0 text-gold shadow-md shadow-gold/5">
-                  <Icon className="w-5 h-5" />
+                <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-gold/10 border border-gold/25 flex items-center justify-center shrink-0 text-gold shadow-md shadow-gold/5">
+                  <Icon className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
                 </div>
-                <div>
-                  <h4 className="font-serif text-sm text-white font-semibold tracking-wide">
+                <div className="min-w-0">
+                  <h4 className="font-serif text-xs sm:text-sm text-white font-semibold tracking-wide truncate">
                     {item.title}
                   </h4>
-                  <p className="text-xs text-champagne/60 font-sans mt-0.5">
+                  <p className="text-[10px] sm:text-xs text-champagne/60 font-sans mt-0.5 truncate">
                     {item.desc}
                   </p>
                 </div>

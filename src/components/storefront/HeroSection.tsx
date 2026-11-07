@@ -33,15 +33,15 @@ export function HeroSection({ content, featuredProducts }: HeroSectionProps) {
     'https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=1200&q=85';
 
   return (
-    <section className="relative min-h-[85vh] sm:min-h-[88vh] flex items-center justify-center overflow-hidden bg-obsidian py-8 sm:py-12 border-b border-gold/15">
+    <section className="relative min-h-[72vh] sm:min-h-[85vh] lg:min-h-[88vh] flex items-center justify-center overflow-hidden bg-obsidian py-6 sm:py-10 lg:py-12 border-b border-gold/15">
       {/* Isolated Ambient & 3D Background Container */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
         {/* 3D Dynamic Animated Background System (Admin Controlled) */}
         <DynamicBackgroundRenderer targetSection="hero" className="w-full h-full" />
 
         {/* Decorative ambient background lights & luxury halo */}
-        <div className="absolute top-1/4 left-1/4 w-[320px] sm:w-[480px] h-[320px] sm:h-[480px] bg-gold/10 rounded-full blur-[140px] sm:blur-[160px]" />
-        <div className="absolute bottom-1/3 right-1/4 w-[280px] sm:w-[420px] h-[280px] sm:h-[420px] bg-gold-dark/15 rounded-full blur-[120px] sm:blur-[140px]" />
+        <div className="absolute top-1/4 left-1/4 w-[280px] sm:w-[480px] h-[280px] sm:h-[480px] bg-gold/10 rounded-full blur-[120px] sm:blur-[160px]" />
+        <div className="absolute bottom-1/3 right-1/4 w-[240px] sm:w-[420px] h-[240px] sm:h-[420px] bg-gold-dark/15 rounded-full blur-[100px] sm:blur-[140px]" />
 
         {/* Subtle luxury geometric grid watermark */}
         <div className="absolute inset-0 bg-[radial-gradient(#d4af37_1px,transparent_1px)] [background-size:32px_32px] opacity-[0.03]" />
@@ -51,37 +51,37 @@ export function HeroSection({ content, featuredProducts }: HeroSectionProps) {
         <div
           className={`grid grid-cols-1 ${
             show3DBottle ? 'lg:grid-cols-12' : 'lg:grid-cols-12'
-          } gap-8 lg:gap-12 items-center`}
+          } gap-6 sm:gap-8 lg:gap-12 items-center`}
         >
           {/* Main Content Column */}
           <div
             className={`${
               show3DBottle
-                ? 'lg:col-span-6 text-center lg:text-left space-y-6'
-                : 'lg:col-span-7 text-center lg:text-left space-y-6 sm:space-y-7'
+                ? 'lg:col-span-6 text-center lg:text-left space-y-4 sm:space-y-6'
+                : 'lg:col-span-7 text-center lg:text-left space-y-4 sm:space-y-7'
             }`}
           >
             {/* Haute Parfumerie Crest Pill */}
-            <div className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full bg-obsidian-300/90 border border-gold/30 text-champagne text-[10px] sm:text-xs tracking-[0.25em] uppercase font-sans shadow-lg shadow-black/40">
-              <Sparkles className="w-3.5 h-3.5 text-gold animate-pulse" />
+            <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1 sm:py-2 rounded-full bg-obsidian-300/90 border border-gold/30 text-champagne text-[9px] sm:text-xs tracking-[0.25em] uppercase font-sans shadow-lg shadow-black/40">
+              <Sparkles className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-gold animate-pulse" />
               <span>Haute Parfumerie • Pure Extrait 35%</span>
             </div>
 
             {/* Dynamic Hero Tagline */}
-            <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl text-white tracking-tight leading-[1.12]">
+            <h1 className="font-serif text-2xl sm:text-4xl lg:text-6xl text-white tracking-tight leading-[1.15] sm:leading-[1.12]">
               {heroTagline}
             </h1>
 
             {/* Dynamic Hero Description */}
-            <p className="text-sm sm:text-base lg:text-lg text-champagne/75 font-sans leading-relaxed max-w-xl mx-auto lg:mx-0">
+            <p className="text-xs sm:text-base lg:text-lg text-champagne/75 font-sans leading-relaxed max-w-xl mx-auto lg:mx-0">
               {heroDescription}
             </p>
 
             {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4 pt-1">
+            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-2.5 sm:gap-4 pt-1">
               <a
                 href="#collection"
-                className="w-full sm:w-auto px-7 sm:px-8 py-3.5 sm:py-4 rounded-full bg-gold hover:bg-gold-300 text-obsidian font-serif font-bold text-xs uppercase tracking-[0.2em] transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-gold/25 hover:scale-[1.02]"
+                className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 rounded-full bg-gold hover:bg-gold-300 text-obsidian font-serif font-bold text-xs uppercase tracking-[0.2em] transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-gold/25 hover:scale-[1.02]"
               >
                 <span>{heroCtaText}</span>
                 <ArrowRight className="w-4 h-4" />
@@ -89,7 +89,7 @@ export function HeroSection({ content, featuredProducts }: HeroSectionProps) {
 
               <a
                 href="#notes-explorer"
-                className="w-full sm:w-auto px-7 sm:px-8 py-3.5 sm:py-4 rounded-full border border-gold/40 hover:border-gold text-champagne hover:text-white font-serif text-xs uppercase tracking-[0.2em] transition-all duration-300 bg-obsidian-400/40 hover:bg-obsidian-300/60 flex items-center justify-center"
+                className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 rounded-full border border-gold/40 hover:border-gold text-champagne hover:text-white font-serif text-xs uppercase tracking-[0.2em] transition-all duration-300 bg-obsidian-400/40 hover:bg-obsidian-300/60 flex items-center justify-center"
               >
                 <span>{heroSecondaryCta}</span>
               </a>
@@ -148,7 +148,7 @@ export function HeroSection({ content, featuredProducts }: HeroSectionProps) {
               </div>
             ) : (
               /* Highly Responsive Editorial Showcase Frame */
-              <div className="relative w-full max-w-[440px] sm:max-w-[480px] aspect-[4/5] rounded-3xl overflow-hidden border border-gold/30 shadow-2xl bg-obsidian-400 group">
+              <div className="relative w-full max-w-[320px] sm:max-w-[440px] lg:max-w-[480px] aspect-[4/5] rounded-2xl sm:rounded-3xl overflow-hidden border border-gold/30 shadow-2xl bg-obsidian-400 group">
                 <Image
                   src={heroImageUrl}
                   alt={activeProduct?.title || 'Khushbooo Haute Parfumerie'}
@@ -160,16 +160,16 @@ export function HeroSection({ content, featuredProducts }: HeroSectionProps) {
                 <div className="absolute inset-0 bg-gradient-to-t from-obsidian via-obsidian/20 to-transparent" />
 
                 {/* Overlaid Flacon Label */}
-                <div className="absolute bottom-6 inset-x-6 p-4 rounded-2xl bg-obsidian-500/90 backdrop-blur-md border border-gold/30 flex items-center justify-between">
+                <div className="absolute bottom-3 sm:bottom-6 inset-x-3 sm:inset-x-6 p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-obsidian-500/90 backdrop-blur-md border border-gold/30 flex items-center justify-between">
                   <div>
-                    <span className="text-[10px] text-gold uppercase tracking-[0.25em] font-sans">
+                    <span className="text-[9px] sm:text-[10px] text-gold uppercase tracking-[0.25em] font-sans">
                       Featured Atelier Creation
                     </span>
-                    <h3 className="font-serif text-lg text-white font-medium">
+                    <h3 className="font-serif text-sm sm:text-lg text-white font-medium">
                       {activeProduct?.title || 'Oud Royal Extrait'}
                     </h3>
                   </div>
-                  <span className="font-serif text-gold font-bold text-base">
+                  <span className="font-serif text-gold font-bold text-sm sm:text-base">
                     Rs. {(activeProduct?.price || 14500).toLocaleString()}
                   </span>
                 </div>

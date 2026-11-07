@@ -29,26 +29,26 @@ export function ProductGrid({ products, content }: ProductGridProps) {
   });
 
   return (
-    <section id="collection" className="py-24 bg-obsidian-600 relative border-b border-gold/15">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="collection" className="py-12 sm:py-20 lg:py-24 bg-obsidian-600 relative border-b border-gold/15">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12 space-y-4">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-obsidian-400 border border-gold/30 text-champagne text-xs tracking-[0.2em] uppercase font-sans">
-            <Sparkles className="w-3.5 h-3.5 text-gold" />
+        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12 space-y-3 sm:space-y-4">
+          <div className="inline-flex items-center gap-2 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-obsidian-400 border border-gold/30 text-champagne text-[10px] sm:text-xs tracking-[0.2em] uppercase font-sans">
+            <Sparkles className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-gold" />
             <span>Khushbooo Atelier Collection</span>
           </div>
 
-          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-white tracking-tight">
+          <h2 className="font-serif text-2xl sm:text-4xl lg:text-5xl text-white tracking-tight">
             {title}
           </h2>
 
-          <p className="text-sm sm:text-base text-champagne/70 font-sans leading-relaxed">
+          <p className="text-xs sm:text-base text-champagne/70 font-sans leading-relaxed">
             {subtitle}
           </p>
 
           {/* Olfactory Filter Tabs */}
-          <div className="flex flex-wrap justify-center gap-2.5 pt-4">
+          <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2.5 pt-2 sm:pt-4">
             {[
               { label: 'All Collections', value: 'All' },
               { label: 'Artisanal Perfumes (100ml)', value: 'Perfumes' },
@@ -58,7 +58,7 @@ export function ProductGrid({ products, content }: ProductGridProps) {
               <button
                 key={tab.value}
                 onClick={() => setActiveFilter(tab.value as any)}
-                className={`px-4 py-1.5 rounded-full text-xs uppercase tracking-wider font-sans transition-all border ${
+                className={`px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs uppercase tracking-wider font-sans transition-all border ${
                   activeFilter === tab.value
                     ? 'bg-gold text-obsidian border-gold font-bold shadow-md shadow-gold/20'
                     : 'bg-obsidian-400/60 text-champagne/70 border-gold/20 hover:border-gold/40 hover:text-white'
@@ -70,8 +70,8 @@ export function ProductGrid({ products, content }: ProductGridProps) {
           </div>
         </div>
 
-        {/* Product Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        {/* Product Cards Grid: 2 Columns on mobile, 3 on tablet, 4 on desktop */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-4 lg:gap-6">
           {filteredProducts.map((product) => {
             const isSoldOut = product.stock_quantity <= 0;
             const isLowStock = product.stock_quantity > 0 && product.stock_quantity <= 5;
@@ -82,7 +82,8 @@ export function ProductGrid({ products, content }: ProductGridProps) {
             return (
               <div
                 key={product.id}
-                className="group relative rounded-2xl bg-obsidian-400/60 border border-gold/15 hover:border-gold/40 transition-all duration-500 overflow-hidden flex flex-col justify-between shadow-xl"
+                onClick={() => setSelectedProduct(product)}
+                className="group relative rounded-xl sm:rounded-2xl bg-obsidian-400/60 border border-gold/15 hover:border-gold/40 transition-all duration-500 overflow-hidden flex flex-col justify-between shadow-xl cursor-pointer hover:-translate-y-1"
               >
                 {/* Image Container with Badges */}
                 <div className="relative aspect-[4/5] w-full overflow-hidden bg-obsidian-500">
@@ -91,43 +92,46 @@ export function ProductGrid({ products, content }: ProductGridProps) {
                     alt={product.title}
                     fill
                     className="object-cover object-center group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                   />
 
                   {/* Gradient Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-obsidian-500 via-transparent to-transparent opacity-80" />
 
                   {/* Real-time Stock Indicator Badge */}
-                  <div className="absolute top-3 left-3 z-10">
+                  <div className="absolute top-2 left-2 sm:top-3 sm:left-3 z-10">
                     {isSoldOut ? (
-                      <span className="px-2.5 py-0.5 rounded-full text-[9px] font-serif uppercase tracking-widest bg-red-950/80 border border-red-500/40 text-red-300 backdrop-blur-md">
+                      <span className="px-1.5 sm:px-2.5 py-0.5 rounded-full text-[8px] sm:text-[9px] font-serif uppercase tracking-widest bg-red-950/80 border border-red-500/40 text-red-300 backdrop-blur-md">
                         Sold Out
                       </span>
                     ) : isLowStock ? (
-                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-serif uppercase tracking-widest bg-amber-950/80 border border-amber-500/50 text-amber-300 backdrop-blur-md animate-pulse">
+                      <span className="inline-flex items-center gap-1 px-1.5 sm:px-2.5 py-0.5 rounded-full text-[8px] sm:text-[9px] font-serif uppercase tracking-widest bg-amber-950/80 border border-amber-500/50 text-amber-300 backdrop-blur-md animate-pulse">
                         <Flame className="w-2.5 h-2.5 text-amber-400" />
-                        Only {product.stock_quantity} left
+                        <span className="hidden sm:inline">Only</span> {product.stock_quantity} left
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-serif uppercase tracking-widest bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 backdrop-blur-md">
+                      <span className="inline-flex items-center gap-1 px-1.5 sm:px-2.5 py-0.5 rounded-full text-[8px] sm:text-[9px] font-serif uppercase tracking-widest bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 backdrop-blur-md">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                        In Stock
+                        <span className="hidden sm:inline">In</span> Stock
                       </span>
                     )}
                   </div>
 
                   {/* 3D View Ready Badge */}
-                  <div className="absolute top-3 right-3 z-10">
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] uppercase tracking-wider font-sans bg-obsidian-900/80 border border-gold/30 text-champagne backdrop-blur-md">
+                  <div className="absolute top-2 right-2 sm:top-3 sm:right-3 z-10">
+                    <span className="inline-flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-full text-[8px] sm:text-[9px] uppercase tracking-wider font-sans bg-obsidian-900/80 border border-gold/30 text-champagne backdrop-blur-md">
                       <Waves className="w-2.5 h-2.5 text-gold" />
                       <span>3D</span>
                     </span>
                   </div>
 
-                  {/* Hover Quick Action Buttons */}
-                  <div className="absolute inset-x-3 bottom-3 z-10 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  {/* Hover Quick Action Buttons (Desktop / Tablet) */}
+                  <div className="hidden sm:flex absolute inset-x-3 bottom-3 z-10 gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <button
-                      onClick={() => setSelectedProduct(product)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedProduct(product);
+                      }}
                       className="flex-1 py-2 px-2.5 rounded-xl bg-obsidian-300/90 hover:bg-obsidian-200 text-champagne text-[11px] uppercase tracking-wider border border-gold/30 hover:border-gold transition-all flex items-center justify-center gap-1 backdrop-blur-md"
                     >
                       <Eye className="w-3.5 h-3.5 text-gold" />
@@ -135,7 +139,10 @@ export function ProductGrid({ products, content }: ProductGridProps) {
                     </button>
                     <button
                       disabled={isSoldOut}
-                      onClick={() => buyNow(product)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        buyNow(product);
+                      }}
                       className={`flex-1 py-2 px-2.5 rounded-xl text-[11px] uppercase tracking-wider font-bold transition-all flex items-center justify-center gap-1 backdrop-blur-md ${
                         isSoldOut
                           ? 'bg-neutral-800 text-neutral-500 cursor-not-allowed'
@@ -149,23 +156,23 @@ export function ProductGrid({ products, content }: ProductGridProps) {
                 </div>
 
                 {/* Card Content & Details */}
-                <div className="p-5 space-y-3 flex-1 flex flex-col justify-between">
-                  <div className="space-y-1.5">
-                    <div className="text-[10px] text-gold uppercase tracking-widest font-sans font-medium">
-                      {product.volume || (product.category_type === 'attar' ? '12ml Pure Attar Oil' : '100ml Extrait Spray')}
+                <div className="p-2.5 sm:p-5 space-y-2 sm:space-y-3 flex-1 flex flex-col justify-between">
+                  <div className="space-y-1 sm:space-y-1.5">
+                    <div className="text-[9px] sm:text-[10px] text-gold uppercase tracking-widest font-sans font-medium truncate">
+                      {product.volume || (product.category_type === 'attar' ? '12ml Attar Oil' : '100ml Extrait')}
                     </div>
 
-                    <h3 className="font-serif text-lg text-white group-hover:text-gold transition-colors truncate">
+                    <h3 className="font-serif text-xs sm:text-base lg:text-lg text-white group-hover:text-gold transition-colors truncate font-medium">
                       {product.title}
                     </h3>
 
-                    <p className="text-[11px] text-champagne/70 line-clamp-2 font-sans leading-relaxed">
+                    <p className="hidden sm:block text-[11px] text-champagne/70 line-clamp-2 font-sans leading-relaxed">
                       {product.short_description || product.long_description}
                     </p>
 
                     {/* Scent Accord Tag Pills */}
                     {product.top_notes && product.top_notes.length > 0 && (
-                      <div className="flex flex-wrap gap-1 pt-1.5">
+                      <div className="hidden md:flex flex-wrap gap-1 pt-1.5">
                         {product.top_notes.slice(0, 2).map((note, i) => (
                           <span
                             key={i}
@@ -179,13 +186,13 @@ export function ProductGrid({ products, content }: ProductGridProps) {
                   </div>
 
                   {/* Pricing & Add to Bag Trigger */}
-                  <div className="pt-3 border-t border-gold/15 flex items-center justify-between">
-                    <div>
-                      <div className="font-serif text-base text-gold font-bold">
+                  <div className="pt-2 sm:pt-3 border-t border-gold/15 flex items-center justify-between">
+                    <div className="min-w-0">
+                      <div className="font-serif text-xs sm:text-base text-gold font-bold truncate">
                         Rs. {(product.discount_price || product.price).toLocaleString()}
                       </div>
                       {product.discount_price && (
-                        <div className="text-[10px] text-champagne/40 line-through">
+                        <div className="text-[9px] sm:text-[10px] text-champagne/40 line-through">
                           Rs. {product.price.toLocaleString()}
                         </div>
                       )}
@@ -193,15 +200,18 @@ export function ProductGrid({ products, content }: ProductGridProps) {
 
                     <button
                       disabled={isSoldOut}
-                      onClick={() => addToCart(product)}
-                      className={`p-2 rounded-full border transition-all ${
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        addToCart(product);
+                      }}
+                      className={`p-1.5 sm:p-2 rounded-full border transition-all ${
                         isSoldOut
                           ? 'border-neutral-800 text-neutral-600 cursor-not-allowed'
                           : 'border-gold/30 hover:border-gold text-champagne hover:text-gold bg-obsidian-300/50 hover:bg-gold/10'
                       }`}
                       title={isSoldOut ? 'Sold out' : 'Add to Shopping Bag'}
                     >
-                      <ShoppingBag className="w-3.5 h-3.5" />
+                      <ShoppingBag className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                     </button>
                   </div>
                 </div>
