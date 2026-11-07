@@ -39,6 +39,16 @@ export const DEFAULT_SITE_CONTENT: Record<string, { value: string; label: string
     label: 'Hero Secondary Button',
     category: 'hero',
   },
+  show_3d_bottle: {
+    value: 'false',
+    label: 'Show Interactive 3D Flacon on Hero (true / false)',
+    category: 'hero',
+  },
+  hero_image: {
+    value: 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=1200&q=85',
+    label: 'Hero Showcase Luxury Image URL (When 3D is disabled)',
+    category: 'hero',
+  },
   scrolly_title: {
     value: 'The Olfactory Architecture',
     label: 'Fragrance Notes Explorer Title',
