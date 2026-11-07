@@ -30,14 +30,21 @@ export function getSupabaseBrowserClient(): SupabaseClient {
       detectSessionInUrl: true,
     },
     global: {
-      fetch: (input: RequestInfo | URL, init?: RequestInit) => {
-        // Fast timeout so client never crashes or hangs if Supabase is offline/paused
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 2500);
-        return fetch(input, {
-          ...init,
-          signal: controller.signal,
-        }).finally(() => clearTimeout(timeoutId));
+      fetch: async (input: RequestInfo | URL, init?: RequestInit) => {
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 2000);
+          return await fetch(input, {
+            ...init,
+            signal: controller.signal,
+          }).finally(() => clearTimeout(timeoutId));
+        } catch (e) {
+          // Return an empty 503 response instead of throwing uncaught promise rejection in browser
+          return new Response(JSON.stringify([]), {
+            status: 503,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
       },
     },
   });

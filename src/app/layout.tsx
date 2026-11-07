@@ -29,8 +29,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${cinzel.variable} ${montserrat.variable} dark`}>
-      <body className="bg-obsidian text-champagne min-h-screen selection:bg-gold/30 selection:text-white antialiased">
+    <html lang="en" className={`${cinzel.variable} ${montserrat.variable} dark`} suppressHydrationWarning>
+      <body
+        className="bg-obsidian text-champagne min-h-screen selection:bg-gold/30 selection:text-white antialiased"
+        suppressHydrationWarning
+      >
         <CartProvider>
           {children}
           <CartDrawer />

@@ -211,17 +211,16 @@ export async function getBackgroundScenes(): Promise<BackgroundScene[]> {
 
   try {
     const supabase = getSupabaseBrowserClient();
-    const { data, error } = await supabase
-      .from('background_scenes')
-      .select('*')
-      .order('order_index', { ascending: true })
-      .throwOnError();
+    const result = await Promise.race([
+      supabase.from('background_scenes').select('*').order('order_index', { ascending: true }),
+      new Promise<null>((resolve) => setTimeout(() => resolve(null), 1500)),
+    ]);
 
-    if (error || !data || data.length === 0) {
+    if (!result || result.error || !result.data || result.data.length === 0) {
       return DEFAULT_BACKGROUND_SCENES;
     }
 
-    return data as BackgroundScene[];
+    return result.data as BackgroundScene[];
   } catch (err) {
     // Graceful offline fallback to curated luxury starter scenes
     return DEFAULT_BACKGROUND_SCENES;
