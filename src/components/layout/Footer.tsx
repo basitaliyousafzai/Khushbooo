@@ -25,44 +25,11 @@ export function Footer({ content }: FooterProps) {
   );
 
   return (
-    <footer id="contact" className="bg-obsidian-600 border-t border-gold/15 text-champagne/70 font-sans pt-16 pb-12">
+    <footer id="contact" className="bg-[#0D0B0A] border-t border-gold/15 text-champagne/70 font-sans pt-16 pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Value Propositions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pb-14 border-b border-gold/10">
-          <div className="flex items-center gap-4 p-4 rounded-xl bg-obsidian-400/40 border border-gold/10">
-            <div className="p-3 rounded-full bg-gold/10 text-gold">
-              <Truck className="w-5 h-5" />
-            </div>
-            <div>
-              <h4 className="text-sm font-serif text-white tracking-wider uppercase">Cash on Delivery</h4>
-              <p className="text-xs text-champagne/60 mt-0.5">Pay conveniently upon delivery across Pakistan.</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4 p-4 rounded-xl bg-obsidian-400/40 border border-gold/10">
-            <div className="p-3 rounded-full bg-gold/10 text-gold">
-              <Award className="w-5 h-5" />
-            </div>
-            <div>
-              <h4 className="text-sm font-serif text-white tracking-wider uppercase">Perfumes & Pure Attars</h4>
-              <p className="text-xs text-champagne/60 mt-0.5">35% Extraits & 100% uncut pure alcohol-free attar oils.</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4 p-4 rounded-xl bg-obsidian-400/40 border border-gold/10">
-            <div className="p-3 rounded-full bg-gold/10 text-gold">
-              <Shield className="w-5 h-5" />
-            </div>
-            <div>
-              <h4 className="text-sm font-serif text-white tracking-wider uppercase">Wax-Sealed Flacons</h4>
-              <p className="text-xs text-champagne/60 mt-0.5">100% authentic batches hand-numbered in our atelier.</p>
-            </div>
-          </div>
-        </div>
-
         {/* Main Footer Links */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 pb-12">
           
           {/* Brand Col */}
           <div className="md:col-span-2 space-y-4">

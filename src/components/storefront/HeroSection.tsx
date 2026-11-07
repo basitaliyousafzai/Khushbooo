@@ -81,8 +81,8 @@ export function HeroSection({ content, featuredProducts }: HeroSectionProps) {
 
             {/* Interactive 3D Flacon Switcher */}
             {featuredProducts.length > 1 && (
-              <div className="pt-4">
-                <p className="text-[10px] uppercase tracking-[0.25em] text-champagne/60 font-sans mb-3 text-center lg:text-left">
+              <div className="pt-2">
+                <p className="text-[10px] uppercase tracking-[0.25em] text-champagne/60 font-sans mb-2.5 text-center lg:text-left">
                   Inspect Flacon:
                 </p>
 
@@ -103,22 +103,6 @@ export function HeroSection({ content, featuredProducts }: HeroSectionProps) {
                 </div>
               </div>
             )}
-
-            {/* Sleek Prestige Hallmarks */}
-            <div className="pt-6 grid grid-cols-3 gap-4 border-t border-gold/15 text-center lg:text-left">
-              <div>
-                <div className="font-serif text-sm text-gold font-bold">100% Uncut</div>
-                <div className="text-[10px] uppercase tracking-wider text-champagne/50">Pure Attar Oils</div>
-              </div>
-              <div>
-                <div className="font-serif text-sm text-gold font-bold">35% Extrait</div>
-                <div className="text-[10px] uppercase tracking-wider text-champagne/50">Haute Parfumerie</div>
-              </div>
-              <div>
-                <div className="font-serif text-sm text-gold font-bold">Free Shipping</div>
-                <div className="text-[10px] uppercase tracking-wider text-champagne/50">Nationwide COD</div>
-              </div>
-            </div>
 
           </div>
 

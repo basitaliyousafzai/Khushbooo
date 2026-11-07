@@ -21,28 +21,22 @@ export function AlternatingProductMarquee({ products }: AlternatingProductMarque
     setWishlist((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
-  // Divide products into three rows for alternating scrolling marquee
+  // Divide products into alternating sets (max 6 items per set to keep page lightweight and elegant)
   const perfumes = products.filter((p) => p.category_type === 'perfume');
   const attars = products.filter((p) => p.category_type === 'attar');
   const allProds = products.length > 0 ? products : [];
 
   const row1Prods = attars.length > 0 ? attars : allProds;
   const row2Prods = perfumes.length > 0 ? perfumes : allProds;
-  const row3Prods = allProds;
 
-  // Multiply to provide smooth seamless infinite track
+  // Duplicate only once for a smooth, performant infinite marquee
   const duplicate = (arr: Product[]) => {
     if (arr.length === 0) return [];
-    let out = [...arr];
-    while (out.length < 10) {
-      out = [...out, ...arr];
-    }
-    return [...out, ...out];
+    return [...arr, ...arr];
   };
 
   const row1Items = duplicate(row1Prods);
   const row2Items = duplicate(row2Prods);
-  const row3Items = duplicate(row3Prods);
 
   const renderProductCard = (product: Product, index: number) => {
     const thumbnail =
@@ -178,27 +172,20 @@ export function AlternatingProductMarquee({ products }: AlternatingProductMarque
         </p>
       </div>
 
-      {/* 3 Animated Alternating Scrolling Marquee Rows */}
+      {/* 2 Animated Alternating Scrolling Marquee Rows (RTL -> LTR) */}
       <div className="space-y-4 sm:space-y-6">
         
-        {/* ROW 1: Right to Left (Best Sellers & Pure Attars) */}
+        {/* ROW 1: Right to Left (Pure Concentrated Attars) */}
         <div className="relative w-full overflow-hidden group">
           <div className="flex w-max gap-4 sm:gap-6 animate-marquee group-hover:[animation-play-state:paused]">
             {row1Items.map((prod, idx) => renderProductCard(prod, idx))}
           </div>
         </div>
 
-        {/* ROW 2: Left to Right (High-Value Haute Extraits) */}
+        {/* ROW 2: Left to Right (Haute Parfumerie Extraits) */}
         <div className="relative w-full overflow-hidden group">
           <div className="flex w-max gap-4 sm:gap-6 animate-marquee-reverse group-hover:[animation-play-state:paused]">
             {row2Items.map((prod, idx) => renderProductCard(prod, idx))}
-          </div>
-        </div>
-
-        {/* ROW 3: Right to Left (Signature Highlights) */}
-        <div className="relative w-full overflow-hidden group">
-          <div className="flex w-max gap-4 sm:gap-6 animate-marquee group-hover:[animation-play-state:paused]">
-            {row3Items.map((prod, idx) => renderProductCard(prod, idx))}
           </div>
         </div>
 
