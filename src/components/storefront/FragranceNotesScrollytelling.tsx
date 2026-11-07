@@ -174,7 +174,7 @@ export function FragranceNotesScrollytelling({ content }: FragranceNotesProps) {
                 alt={currentTier.name}
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-700 opacity-90"
-                sizes="(max-width: 1024px) 100vw, 50vw"
+                sizes="(max-width: 1024px) 100vw, 600px"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-obsidian via-transparent to-transparent opacity-85" />
 
@@ -242,6 +242,7 @@ export function FragranceNotesScrollytelling({ content }: FragranceNotesProps) {
                       src={ing.image}
                       alt={ing.name}
                       fill
+                      sizes="80px"
                       className="object-cover group-hover:scale-110 transition-transform duration-500"
                     />
                   </div>

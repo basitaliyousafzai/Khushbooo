@@ -609,6 +609,7 @@ export function ProductFormModal({ product, isOpen, onClose, onSaved }: ProductF
                     src={img.image_url}
                     alt="Perfume photo"
                     fill
+                    sizes="120px"
                     className="object-cover"
                   />
                   {img.is_thumbnail && (
