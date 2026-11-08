@@ -1,24 +1,65 @@
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Bell, Sparkles, X, ArrowRight, ShoppingBag, CheckCircle2 } from 'lucide-react';
+import {
+  Bell,
+  Sparkles,
+  X,
+  ArrowRight,
+  ShoppingBag,
+  Check,
+  CheckCheck,
+  Clock,
+  Eye,
+  CheckCircle2,
+  Filter
+} from 'lucide-react';
 import { Order } from '@/types';
 import { formatOrderTrackingId } from '@/lib/data/orders';
 
 export function AdminGlobalOrderNotifier() {
   const router = useRouter();
   const [activeAlert, setActiveAlert] = useState<Order | null>(null);
-  const [unreadCount, setUnreadCount] = useState(0);
-  const [recentOrders, setRecentOrders] = useState<Order[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [readOrderIds, setReadOrderIds] = useState<Set<string>>(new Set());
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [dropdownTab, setDropdownTab] = useState<'all' | 'unread'>('all');
   const [isOnline, setIsOnline] = useState(true);
 
   const initialLoadDone = useRef(false);
   const maxOrderNumberRef = useRef<number>(0);
 
-  // Play luxury audio chime when new order arrives
+  // Initialize read order IDs from localStorage
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('admin_read_order_ids');
+      if (stored) {
+        setReadOrderIds(new Set(JSON.parse(stored)));
+      }
+    } catch (e) {}
+
+    // Listen to custom 'order-read' events triggered from order status changes
+    const handleOrderReadEvent = (e: any) => {
+      const orderId = e?.detail?.orderId;
+      if (orderId) {
+        setReadOrderIds((prev) => {
+          const next = new Set(prev);
+          next.add(orderId);
+          try {
+            localStorage.setItem('admin_read_order_ids', JSON.stringify(Array.from(next)));
+          } catch (err) {}
+          return next;
+        });
+      }
+    };
+
+    window.addEventListener('order-read', handleOrderReadEvent);
+    return () => window.removeEventListener('order-read', handleOrderReadEvent);
+  }, []);
+
+  // Luxury audio chime when a new order arrives
   const playLuxuryChime = () => {
     try {
       const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
@@ -61,11 +102,10 @@ export function AdminGlobalOrderNotifier() {
       gain3.connect(ctx.destination);
       osc3.start(now + 0.28);
       osc3.stop(now + 1.2);
-    } catch (e) {
-      // AudioContext policy non-fatal
-    }
+    } catch (e) {}
   };
 
+  // Poll orders
   const pollOrders = async () => {
     try {
       const res = await fetch('/api/admin/orders', { cache: 'no-store' });
@@ -75,22 +115,20 @@ export function AdminGlobalOrderNotifier() {
       }
       setIsOnline(true);
       const data = await res.json();
-      const orders: Order[] = data.orders || [];
+      const fetchedOrders: Order[] = data.orders || [];
 
-      if (orders.length > 0) {
-        setRecentOrders(orders.slice(0, 5));
+      if (fetchedOrders.length > 0) {
+        setOrders(fetchedOrders);
 
-        const highestNum = Math.max(...orders.map((o) => o.order_number || 0));
+        const highestNum = Math.max(...fetchedOrders.map((o) => o.order_number || 0));
 
         if (!initialLoadDone.current) {
           initialLoadDone.current = true;
           maxOrderNumberRef.current = highestNum;
         } else if (highestNum > maxOrderNumberRef.current) {
-          // Find the newest order
-          const newest = orders.find((o) => o.order_number === highestNum) || orders[0];
+          const newest = fetchedOrders.find((o) => o.order_number === highestNum) || fetchedOrders[0];
           maxOrderNumberRef.current = highestNum;
           setActiveAlert(newest);
-          setUnreadCount((prev) => prev + 1);
           playLuxuryChime();
         }
       }
@@ -105,7 +143,7 @@ export function AdminGlobalOrderNotifier() {
     return () => clearInterval(interval);
   }, []);
 
-  // Auto-dismiss alert after 10 seconds
+  // Auto-dismiss alert toast after 10 seconds
   useEffect(() => {
     if (activeAlert) {
       const timer = setTimeout(() => {
@@ -115,15 +153,78 @@ export function AdminGlobalOrderNotifier() {
     }
   }, [activeAlert]);
 
-  const handleOpenOrder = (orderId: string) => {
+  // Check if an order is unread:
+  // An order is unread ONLY IF:
+  // 1. Its status is 'Pending' (if it has been Confirmed, Dispatched, Delivered, or Cancelled, it is no longer pending action)
+  // 2. AND it hasn't been opened or marked as read
+  const isOrderUnread = (order: Order) => {
+    if (order.status !== 'Pending') return false;
+    return !readOrderIds.has(order.id);
+  };
+
+  // Compute live unread orders count for the bell badge
+  const unreadOrdersCount = useMemo(() => {
+    return orders.filter(isOrderUnread).length;
+  }, [orders, readOrderIds]);
+
+  // Mark a single order as read
+  const markAsRead = (orderId: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setReadOrderIds((prev) => {
+      const next = new Set(prev);
+      next.add(orderId);
+      try {
+        localStorage.setItem('admin_read_order_ids', JSON.stringify(Array.from(next)));
+      } catch (err) {}
+      return next;
+    });
+  };
+
+  // Mark all orders as read (Facebook-style)
+  const markAllAsRead = () => {
+    setReadOrderIds((prev) => {
+      const next = new Set(prev);
+      orders.forEach((o) => next.add(o.id));
+      try {
+        localStorage.setItem('admin_read_order_ids', JSON.stringify(Array.from(next)));
+      } catch (err) {}
+      return next;
+    });
+  };
+
+  // Open order in dispatch desk
+  const handleOpenOrder = (order: Order) => {
+    markAsRead(order.id);
     setActiveAlert(null);
     setIsDropdownOpen(false);
     router.push(`/admin/orders`);
   };
 
+  // Filtered list for the dropdown
+  const displayedOrders = useMemo(() => {
+    const slice = orders.slice(0, 10);
+    if (dropdownTab === 'unread') {
+      return slice.filter(isOrderUnread);
+    }
+    return slice;
+  }, [orders, dropdownTab, readOrderIds]);
+
+  // Format relative time (e.g. "2m ago", "1h ago")
+  const formatTimeAgo = (dateStr: string) => {
+    try {
+      const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
+      if (diff < 60) return 'Just now';
+      if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+      if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+      return `${Math.floor(diff / 86400)}d ago`;
+    } catch {
+      return '';
+    }
+  };
+
   return (
     <>
-      {/* Top Bar Status & Notification Bell */}
+      {/* Top Bar Status & Live Notification Bell */}
       <div className="flex items-center justify-between pb-6 mb-6 border-b border-gold/15">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-obsidian-500 border border-gold/20 text-xs font-sans">
@@ -137,73 +238,181 @@ export function AdminGlobalOrderNotifier() {
           </span>
         </div>
 
-        {/* Notifications Dropdown */}
+        {/* Facebook-style Notifications Bell */}
         <div className="relative">
           <button
-            onClick={() => {
-              setIsDropdownOpen(!isDropdownOpen);
-              if (!isDropdownOpen) setUnreadCount(0);
-            }}
-            className="relative p-2.5 rounded-xl bg-obsidian-500 border border-gold/20 hover:border-gold text-champagne hover:text-gold transition-all"
-            title="Recent Orders Stream"
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            className={`relative p-2.5 rounded-xl border transition-all ${
+              unreadOrdersCount > 0
+                ? 'bg-gold/15 border-gold text-gold shadow-lg shadow-gold/20'
+                : 'bg-obsidian-500 border-gold/20 hover:border-gold text-champagne hover:text-gold'
+            }`}
+            title="Order Notifications"
           >
-            <Bell className="w-4 h-4" />
-            {unreadCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white font-bold text-[10px] flex items-center justify-center animate-bounce shadow-lg shadow-red-500/40">
-                {unreadCount}
+            <Bell className={`w-4 h-4 ${unreadOrdersCount > 0 ? 'animate-wiggle' : ''}`} />
+            
+            {/* Live Facebook-style unread counter badge */}
+            {unreadOrdersCount > 0 && (
+              <span className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 rounded-full bg-red-600 text-white font-bold text-[10px] flex items-center justify-center animate-pulse shadow-lg shadow-red-600/50 border border-obsidian-900">
+                {unreadOrdersCount > 9 ? '9+' : unreadOrdersCount}
               </span>
             )}
           </button>
 
-          {/* Recent Orders Dropdown Panel */}
+          {/* Facebook-style Notification Dropdown Panel */}
           {isDropdownOpen && (
-            <div className="absolute right-0 top-12 z-50 w-80 sm:w-96 rounded-2xl bg-obsidian-500 border border-gold/30 shadow-2xl p-4 space-y-3 animate-fadeIn">
+            <div className="absolute right-0 top-12 z-50 w-84 sm:w-96 rounded-2xl bg-obsidian-500 border border-gold/30 shadow-2xl p-4 space-y-3 animate-fadeIn">
+              
+              {/* Dropdown Header */}
               <div className="flex items-center justify-between pb-2 border-b border-gold/15">
-                <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-gold font-sans font-bold">
-                  <ShoppingBag className="w-3.5 h-3.5" />
-                  <span>Recent Live Orders</span>
+                <div className="flex items-center gap-2">
+                  <span className="font-serif text-sm text-white font-bold tracking-wide">
+                    Order Notifications
+                  </span>
+                  {unreadOrdersCount > 0 && (
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-sans font-bold bg-gold text-obsidian">
+                      {unreadOrdersCount} new
+                    </span>
+                  )}
                 </div>
+
+                <div className="flex items-center gap-2">
+                  {unreadOrdersCount > 0 && (
+                    <button
+                      onClick={markAllAsRead}
+                      className="text-[11px] text-gold hover:text-white flex items-center gap-1 transition-colors font-sans"
+                      title="Mark all as read"
+                    >
+                      <CheckCheck className="w-3.5 h-3.5" />
+                      <span>Mark all read</span>
+                    </button>
+                  )}
+
+                  <button
+                    onClick={() => setIsDropdownOpen(false)}
+                    className="p-1 rounded-full hover:bg-obsidian-400 text-champagne/60 hover:text-white"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Filter Tabs: All vs Unread Only */}
+              <div className="flex gap-2 text-[11px] font-sans">
                 <button
-                  onClick={() => setIsDropdownOpen(false)}
-                  className="text-champagne/50 hover:text-white"
+                  onClick={() => setDropdownTab('all')}
+                  className={`px-3 py-1 rounded-lg transition-colors ${
+                    dropdownTab === 'all'
+                      ? 'bg-gold/20 text-gold font-bold border border-gold/30'
+                      : 'text-champagne/60 hover:text-white'
+                  }`}
                 >
-                  <X className="w-4 h-4" />
+                  All ({orders.length})
+                </button>
+                <button
+                  onClick={() => setDropdownTab('unread')}
+                  className={`px-3 py-1 rounded-lg transition-colors ${
+                    dropdownTab === 'unread'
+                      ? 'bg-gold/20 text-gold font-bold border border-gold/30'
+                      : 'text-champagne/60 hover:text-white'
+                  }`}
+                >
+                  Unread ({unreadOrdersCount})
                 </button>
               </div>
 
-              {recentOrders.length === 0 ? (
-                <p className="text-xs text-champagne/60 text-center py-4">No recent orders yet</p>
+              {/* Orders List */}
+              {displayedOrders.length === 0 ? (
+                <div className="py-8 text-center space-y-2">
+                  <CheckCircle2 className="w-8 h-8 text-champagne/30 mx-auto" />
+                  <p className="text-xs text-champagne/60 font-sans">
+                    {dropdownTab === 'unread' ? 'No unread notifications' : 'No recent orders found'}
+                  </p>
+                </div>
               ) : (
-                <div className="space-y-2 max-h-72 overflow-y-auto">
-                  {recentOrders.map((ord) => (
-                    <div
-                      key={ord.id}
-                      onClick={() => handleOpenOrder(ord.id)}
-                      className="p-3 rounded-xl bg-obsidian-600/70 hover:bg-obsidian-400 border border-gold/10 hover:border-gold/30 transition-all cursor-pointer space-y-1"
-                    >
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="font-serif text-gold font-bold">
-                          {formatOrderTrackingId(ord.order_number)}
-                        </span>
-                        <span className="text-[10px] uppercase px-2 py-0.5 rounded-full bg-gold/10 border border-gold/25 text-champagne">
-                          {ord.status}
-                        </span>
+                <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
+                  {displayedOrders.map((ord) => {
+                    const unread = isOrderUnread(ord);
+
+                    return (
+                      <div
+                        key={ord.id}
+                        onClick={() => handleOpenOrder(ord)}
+                        className={`p-3 rounded-xl border transition-all cursor-pointer relative group ${
+                          unread
+                            ? 'bg-obsidian-400 border-gold/40 shadow-sm shadow-gold/10 hover:border-gold'
+                            : 'bg-obsidian-600/60 border-gold/10 hover:bg-obsidian-400/80 hover:border-gold/25'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          
+                          <div className="flex items-center gap-2">
+                            {/* Unread indicator dot */}
+                            {unread ? (
+                              <span className="w-2 h-2 rounded-full bg-gold shadow-md shadow-gold animate-pulse shrink-0" />
+                            ) : (
+                              <span className="w-2 h-2 rounded-full bg-transparent shrink-0" />
+                            )}
+                            
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <span className="font-serif text-xs text-gold font-bold">
+                                  {formatOrderTrackingId(ord.order_number)}
+                                </span>
+                                <span className={`text-[9px] uppercase px-2 py-0.2 rounded-full font-sans font-medium ${
+                                  ord.status === 'Pending'
+                                    ? 'bg-amber-950/80 text-amber-300 border border-amber-500/30'
+                                    : ord.status === 'Confirmed'
+                                    ? 'bg-blue-950/80 text-blue-300 border border-blue-500/30'
+                                    : ord.status === 'Dispatched'
+                                    ? 'bg-purple-950/80 text-purple-300 border border-purple-500/30'
+                                    : ord.status === 'Delivered'
+                                    ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-500/30'
+                                    : 'bg-neutral-800 text-neutral-400'
+                                }`}>
+                                  {ord.status}
+                                </span>
+                              </div>
+                              <h5 className="font-serif text-sm text-white font-medium mt-0.5 truncate">
+                                {ord.customer_name}
+                              </h5>
+                            </div>
+                          </div>
+
+                          {/* Quick Mark Read Icon */}
+                          {unread && (
+                            <button
+                              type="button"
+                              onClick={(e) => markAsRead(ord.id, e)}
+                              className="p-1 rounded hover:bg-obsidian-300 text-champagne/40 hover:text-gold transition-colors"
+                              title="Mark as read"
+                            >
+                              <Check className="w-3.5 h-3.5" />
+                            </button>
+                          )}
+                        </div>
+
+                        {/* Details line */}
+                        <div className="flex items-center justify-between text-[11px] text-champagne/70 font-sans mt-2 pl-4">
+                          <span>{ord.city} • Rs. {ord.total_amount?.toLocaleString()}</span>
+                          <span className="text-[10px] text-champagne/40 flex items-center gap-1">
+                            <Clock className="w-2.5 h-2.5" />
+                            <span>{formatTimeAgo(ord.created_at)}</span>
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex justify-between text-[11px] text-champagne/80 font-sans">
-                        <span>{ord.customer_name} ({ord.city})</span>
-                        <span className="text-white font-medium">Rs. {ord.total_amount?.toLocaleString()}</span>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
 
+              {/* View All Orders Link */}
               <Link
                 href="/admin/orders"
                 onClick={() => setIsDropdownOpen(false)}
                 className="block text-center py-2 text-xs uppercase tracking-wider text-gold hover:text-gold-300 font-sans font-bold border-t border-gold/15 pt-3"
               >
-                Go to Order Dispatch Desk →
+                Open Order Dispatch Desk →
               </Link>
             </div>
           )}
@@ -257,7 +466,7 @@ export function AdminGlobalOrderNotifier() {
 
             <div className="flex items-center justify-between pt-1">
               <button
-                onClick={() => handleOpenOrder(activeAlert.id)}
+                onClick={() => handleOpenOrder(activeAlert)}
                 className="flex-1 py-2.5 px-4 rounded-xl bg-gold hover:bg-gold-300 text-obsidian font-serif font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all shadow-md shadow-gold/20"
               >
                 <span>Open in Dispatch Desk</span>

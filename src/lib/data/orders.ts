@@ -290,6 +290,16 @@ export async function updateOrderStatus(
       });
       const data = await res.json();
       if (data.success) {
+        // Automatically mark as read and clear from unread notifications
+        try {
+          const stored = JSON.parse(localStorage.getItem('admin_read_order_ids') || '[]');
+          if (!stored.includes(orderId)) {
+            stored.push(orderId);
+            localStorage.setItem('admin_read_order_ids', JSON.stringify(stored));
+          }
+          window.dispatchEvent(new CustomEvent('order-read', { detail: { orderId } }));
+        } catch (e) {}
+
         return { success: true };
       }
     } catch (e: any) {

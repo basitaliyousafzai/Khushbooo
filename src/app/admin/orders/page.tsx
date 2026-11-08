@@ -230,7 +230,20 @@ export default function OrderDispatchPage() {
                 </tr>
               ) : (
                 filteredOrders.map((order) => (
-                  <tr key={order.id} className="hover:bg-obsidian-300/40 transition-colors">
+                  <tr
+                    key={order.id}
+                    onClick={() => {
+                      try {
+                        const stored = JSON.parse(localStorage.getItem('admin_read_order_ids') || '[]');
+                        if (!stored.includes(order.id)) {
+                          stored.push(order.id);
+                          localStorage.setItem('admin_read_order_ids', JSON.stringify(stored));
+                          window.dispatchEvent(new CustomEvent('order-read', { detail: { orderId: order.id } }));
+                        }
+                      } catch (e) {}
+                    }}
+                    className="hover:bg-obsidian-300/40 transition-colors cursor-pointer"
+                  >
                     
                     {/* Order Reference */}
                     <td className="py-4 px-3 font-mono text-gold font-bold">
