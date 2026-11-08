@@ -15,17 +15,52 @@ interface ProductGridProps {
 export function ProductGrid({ products, content }: ProductGridProps) {
   const { addToCart, buyNow } = useCart();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [activeFilter, setActiveFilter] = useState<'All' | 'Perfumes' | 'Attars' | 'Oud'>('All');
+  const [activeFilter, setActiveFilter] = useState<string>('all');
 
   const title = content.catalogue_title || 'Curated Perfumes & Pure Attars';
   const subtitle = content.catalogue_subtitle || 'Each piece is hand-numbered and sealed with our signature wax insignia.';
 
+  // Category label formatter
+  const formatCategoryLabel = (cat: string) => {
+    switch (cat.toLowerCase()) {
+      case 'perfume':
+        return 'Artisanal Perfumes';
+      case 'attar':
+        return 'Pure Concentrated Attars';
+      case 'oud':
+        return 'Rare Aged Oud';
+      case 'bakhoor':
+        return 'Luxury Bakhoor & Incense';
+      case 'gift_set':
+        return 'Discovery Gift Sets';
+      case 'solid_perfume':
+        return 'Solid Perfume Balms';
+      case 'body_mist':
+        return 'Body & Hair Mists';
+      case 'home_scent':
+        return 'Home Diffusers';
+      default:
+        return cat.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+    }
+  };
+
+  // Derive dynamic filter tabs from products currently in catalogue
+  const availableCategories = React.useMemo(() => {
+    const set = new Set<string>();
+    products.forEach((p) => {
+      const cat = p.category_type || 'perfume';
+      set.add(cat);
+    });
+    return Array.from(set);
+  }, [products]);
+
   const filteredProducts = products.filter((p) => {
-    if (activeFilter === 'All') return true;
-    if (activeFilter === 'Perfumes') return p.category_type === 'perfume' || !p.category_type || p.volume?.includes('Spray');
-    if (activeFilter === 'Attars') return p.category_type === 'attar' || p.volume?.includes('Tola') || p.title.toLowerCase().includes('oud') || p.title.toLowerCase().includes('musk') || p.title.toLowerCase().includes('attar');
-    if (activeFilter === 'Oud') return p.title.toLowerCase().includes('oud') || p.base_notes.some((n) => n.toLowerCase().includes('oud'));
-    return true;
+    if (activeFilter === 'all') return true;
+    const cat = (p.category_type || 'perfume').toLowerCase();
+    if (activeFilter.toLowerCase() === 'oud') {
+      return cat === 'oud' || p.title.toLowerCase().includes('oud') || p.base_notes?.some((n) => n.toLowerCase().includes('oud'));
+    }
+    return cat === activeFilter.toLowerCase();
   });
 
   return (
@@ -47,24 +82,30 @@ export function ProductGrid({ products, content }: ProductGridProps) {
             {subtitle}
           </p>
 
-          {/* Olfactory Filter Tabs */}
+          {/* Dynamic Category Filter Tabs */}
           <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2.5 pt-2 sm:pt-4">
-            {[
-              { label: 'All Collections', value: 'All' },
-              { label: 'Artisanal Perfumes (100ml)', value: 'Perfumes' },
-              { label: 'Pure Concentrated Attars (12ml)', value: 'Attars' },
-              { label: 'Rare Aged Oud', value: 'Oud' },
-            ].map((tab) => (
+            <button
+              onClick={() => setActiveFilter('all')}
+              className={`px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs uppercase tracking-wider font-sans transition-all border ${
+                activeFilter === 'all'
+                  ? 'bg-gold text-obsidian border-gold font-bold shadow-md shadow-gold/20'
+                  : 'bg-obsidian-400/60 text-champagne/70 border-gold/20 hover:border-gold/40 hover:text-white'
+              }`}
+            >
+              All Collections ({products.length})
+            </button>
+
+            {availableCategories.map((cat) => (
               <button
-                key={tab.value}
-                onClick={() => setActiveFilter(tab.value as any)}
+                key={cat}
+                onClick={() => setActiveFilter(cat)}
                 className={`px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs uppercase tracking-wider font-sans transition-all border ${
-                  activeFilter === tab.value
+                  activeFilter === cat
                     ? 'bg-gold text-obsidian border-gold font-bold shadow-md shadow-gold/20'
                     : 'bg-obsidian-400/60 text-champagne/70 border-gold/20 hover:border-gold/40 hover:text-white'
                 }`}
               >
-                {tab.label}
+                {formatCategoryLabel(cat)}
               </button>
             ))}
           </div>

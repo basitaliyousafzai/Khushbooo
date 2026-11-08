@@ -13,13 +13,27 @@ interface ProductFormModalProps {
   onSaved: () => void;
 }
 
+export const FRAGRANCE_CATEGORIES = [
+  { value: 'perfume', label: 'Artisanal Perfume (100ml Spray)', defaultVolume: '100ml Extrait Spray' },
+  { value: 'attar', label: 'Pure Concentrated Attar / Ittar (12ml Tola)', defaultVolume: '12ml Pure Oil Tola' },
+  { value: 'oud', label: 'Rare Dehn Al Oud / Agarwood Elixir', defaultVolume: '12ml Hand-cut Crystal Flacon' },
+  { value: 'bakhoor', label: 'Luxury Bakhoor & Incense Tablets', defaultVolume: '50g Handmade Tablets' },
+  { value: 'solid_perfume', label: 'Solid Perfume & Scent Balm', defaultVolume: '15g Engraved Brass Compact' },
+  { value: 'gift_set', label: 'Discovery Gift Set / Minis Box', defaultVolume: '5 x 10ml Travel Flacons' },
+  { value: 'body_mist', label: 'Fine Fragrance Body & Hair Mist', defaultVolume: '150ml Hydrating Silk Mist' },
+  { value: 'home_scent', label: 'Atelier Reed Diffuser & Room Scent', defaultVolume: '200ml Crystal Reed Diffuser' },
+  { value: 'hair_elixir', label: 'Scented Hair & Beard Oil', defaultVolume: '50ml Conditioning Scent Oil' },
+  { value: 'custom', label: '+ Add Custom Category...', defaultVolume: '' },
+];
+
 export function ProductFormModal({ product, isOpen, onClose, onSaved }: ProductFormModalProps) {
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
   const [price, setPrice] = useState('');
   const [discountPrice, setDiscountPrice] = useState('');
   const [stockQuantity, setStockQuantity] = useState('10');
-  const [categoryType, setCategoryType] = useState<'perfume' | 'attar'>('perfume');
+  const [categoryType, setCategoryType] = useState<string>('perfume');
+  const [customCategoryName, setCustomCategoryName] = useState<string>('');
   const [volume, setVolume] = useState('100ml Extrait Spray');
   const [shortDesc, setShortDesc] = useState('');
   const [longDesc, setLongDesc] = useState('');
@@ -52,8 +66,19 @@ export function ProductFormModal({ product, isOpen, onClose, onSaved }: ProductF
       setPrice(product.price ? String(product.price) : '');
       setDiscountPrice(product.discount_price ? String(product.discount_price) : '');
       setStockQuantity(product.stock_quantity !== undefined ? String(product.stock_quantity) : '10');
-      setCategoryType(product.category_type || 'perfume');
-      setVolume(product.volume || (product.category_type === 'attar' ? '12ml Pure Oil Tola' : '100ml Extrait Spray'));
+      const isKnown = FRAGRANCE_CATEGORIES.some((c) => c.value === product.category_type);
+      if (isKnown) {
+        setCategoryType(product.category_type || 'perfume');
+        setCustomCategoryName('');
+      } else if (product.category_type) {
+        setCategoryType('custom');
+        setCustomCategoryName(product.category_type);
+      } else {
+        setCategoryType('perfume');
+        setCustomCategoryName('');
+      }
+
+      setVolume(product.volume || '100ml Extrait Spray');
       setShortDesc(product.short_description || '');
       setLongDesc(product.long_description || '');
       setModel3dUrl(product.model_3d_url || '');
@@ -179,6 +204,10 @@ export function ProductFormModal({ product, isOpen, onClose, onSaved }: ProductF
 
     try {
       const generatedSlug = slug.trim() || title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      const finalCategory = categoryType === 'custom'
+        ? (customCategoryName.trim().toLowerCase().replace(/[^a-z0-9_]+/g, '_') || 'perfume')
+        : categoryType;
+
       const payload: Partial<Product> = {
         id: product?.id,
         title: title.trim(),
@@ -186,7 +215,7 @@ export function ProductFormModal({ product, isOpen, onClose, onSaved }: ProductF
         price: parseFloat(price),
         discount_price: discountPrice ? parseFloat(discountPrice) : null,
         stock_quantity: parseInt(stockQuantity, 10) || 0,
-        category_type: categoryType,
+        category_type: finalCategory,
         volume: volume.trim(),
         short_description: shortDesc.trim(),
         long_description: longDesc.trim(),
@@ -322,18 +351,39 @@ export function ProductFormModal({ product, isOpen, onClose, onSaved }: ProductF
               <select
                 value={categoryType}
                 onChange={(e) => {
-                  const val = e.target.value as 'perfume' | 'attar';
+                  const val = e.target.value;
                   setCategoryType(val);
-                  if (!product) {
-                    setVolume(val === 'attar' ? '12ml Pure Oil Tola' : '100ml Extrait Spray');
+                  const selectedPreset = FRAGRANCE_CATEGORIES.find((c) => c.value === val);
+                  if (selectedPreset && selectedPreset.defaultVolume && !product) {
+                    setVolume(selectedPreset.defaultVolume);
                   }
                 }}
                 className="w-full px-4 py-3 rounded-xl bg-obsidian-500 border border-gold/20 focus:border-gold focus:outline-none text-white text-sm"
               >
-                <option value="perfume">Artisanal Perfume (100ml Spray)</option>
-                <option value="attar">Pure Concentrated Attar / Ittar (12ml Tola)</option>
+                {FRAGRANCE_CATEGORIES.map((cat) => (
+                  <option key={cat.value} value={cat.value}>
+                    {cat.label}
+                  </option>
+                ))}
               </select>
             </div>
+
+            {/* Custom Category Input if "+ Add Custom Category..." is selected */}
+            {categoryType === 'custom' && (
+              <div className="space-y-1.5 animate-fadeIn">
+                <label className="text-gold uppercase tracking-wider block text-xs">
+                  Custom Category Name <span className="text-gold">*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Hair Oil, Room Diffuser, Scented Candle"
+                  value={customCategoryName}
+                  onChange={(e) => setCustomCategoryName(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl bg-obsidian-500 border border-gold/40 focus:border-gold focus:outline-none text-white text-sm"
+                />
+              </div>
+            )}
 
             <div className="space-y-1.5">
               <label className="text-champagne/80 uppercase tracking-wider block">

@@ -26,7 +26,7 @@ export interface Product {
   price: number;
   discount_price?: number | null;
   stock_quantity: number;
-  category_type?: 'perfume' | 'attar';
+  category_type?: 'perfume' | 'attar' | 'bakhoor' | 'oud' | 'solid_perfume' | 'gift_set' | 'body_mist' | 'home_scent' | string;
   volume?: string; // e.g. "100ml Extrait" or "12ml Pure Oil Tola"
   top_notes: string[];
   middle_notes: string[];
