@@ -32,7 +32,7 @@ export function AdminSidebar() {
       exact: false,
     },
     {
-      name: 'Inventory & Media',
+      name: 'Inventory & Ledgers',
       href: '/admin/products',
       icon: Package,
       exact: false,

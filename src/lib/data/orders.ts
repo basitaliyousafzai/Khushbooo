@@ -171,8 +171,36 @@ export async function placeOrder(orderData: {
           .single();
 
         if (currentProd) {
-          const newStock = Math.max(0, (currentProd.stock_quantity || 0) - item.quantity);
+          const prevStock = Number(currentProd.stock_quantity || 0);
+          const newStock = Math.max(0, prevStock - item.quantity);
           await supabase.from('products').update({ stock_quantity: newStock }).eq('id', item.product_id);
+
+          // Record sale movement into Stock Ledger
+          try {
+            const trackingId = formatOrderTrackingId(order.order_number);
+            const ledgerId = `led-sale-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+            const ledgerPayload = {
+              id: ledgerId,
+              product_id: item.product_id,
+              product_title: item.product_title,
+              movement_type: 'sale',
+              quantity_change: -item.quantity,
+              previous_stock: prevStock,
+              new_stock: newStock,
+              reference_note: `Customer Order (${trackingId})`,
+              created_at: new Date().toISOString(),
+            };
+
+            await supabase.from('site_content').upsert({
+              key: `ledger_${ledgerId}`,
+              value: JSON.stringify(ledgerPayload),
+              label: `Stock Ledger: Sale ${item.product_title}`,
+              category: 'stock_ledger',
+              updated_at: ledgerPayload.created_at,
+            }, { onConflict: 'key' });
+          } catch (ledgerErr) {
+            // Non-fatal
+          }
         }
       }
     }

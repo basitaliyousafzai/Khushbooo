@@ -66,6 +66,20 @@ export interface Order {
   items?: OrderItem[];
 }
 
+export type StockMovementType = 'restock' | 'sale' | 'adjustment' | 'damage' | 'return';
+
+export interface StockLedgerEntry {
+  id: string;
+  product_id: string;
+  product_title: string;
+  movement_type: StockMovementType;
+  quantity_change: number;
+  previous_stock: number;
+  new_stock: number;
+  reference_note?: string;
+  created_at: string;
+}
+
 export interface CartItem {
   product: Product;
   quantity: number;
