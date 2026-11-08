@@ -13,14 +13,15 @@ export function CartDrawer() {
     removeFromCart,
     updateQuantity,
     subtotal,
+    deliveryFee,
+    isFreeShipping,
+    freeShippingThreshold,
+    amountNeededForFreeShipping,
+    finalTotal,
     setIsCheckoutOpen,
   } = useCart();
 
   if (!isCartOpen) return null;
-
-  const freeShippingThreshold = 4999;
-  const isFreeShipping = subtotal >= freeShippingThreshold;
-  const amountNeededForFreeShipping = Math.max(0, freeShippingThreshold - subtotal);
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-obsidian-900/80 backdrop-blur-sm animate-fadeIn">
@@ -158,13 +159,15 @@ export function CartDrawer() {
                 <span>Rs. {subtotal.toLocaleString()}</span>
               </div>
               <div className="flex justify-between text-champagne/70">
-                <span>Nationwide Courier</span>
-                <span>{isFreeShipping ? 'FREE' : 'Rs. 250'}</span>
+                <span>Nationwide Courier Delivery</span>
+                <span className={isFreeShipping ? 'text-emerald-400 font-semibold' : 'text-gold'}>
+                  {isFreeShipping ? 'FREE' : `Rs. ${deliveryFee.toLocaleString()}`}
+                </span>
               </div>
               <div className="flex justify-between font-serif text-base text-white pt-2 border-t border-gold/10">
-                <span>Estimated Total</span>
+                <span>Total Bill to be Paid</span>
                 <span className="text-gold font-bold">
-                  Rs. {(subtotal + (isFreeShipping ? 0 : 250)).toLocaleString()}
+                  Rs. {finalTotal.toLocaleString()}
                 </span>
               </div>
             </div>

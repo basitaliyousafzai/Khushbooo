@@ -121,12 +121,27 @@ export const DEFAULT_SITE_CONTENT: Record<string, { value: string; label: string
   },
   shipping_fee: {
     value: '250',
-    label: 'Standard Shipping Fee',
+    label: 'Standard Base Delivery Fee (Rs.)',
+    category: 'store',
+  },
+  shipping_fee_per_item: {
+    value: '0',
+    label: 'Extra Delivery Fee Per Additional Product (Rs.)',
+    category: 'store',
+  },
+  shipping_calculation_mode: {
+    value: 'flat',
+    label: 'Delivery Calculation Mode (flat = fixed fee | per_item = fee * items | incremental = base + extra per item)',
     category: 'store',
   },
   free_shipping_threshold: {
     value: '4999',
-    label: 'Free Shipping Threshold Amount',
+    label: 'Free Delivery Threshold Amount (Rs. - Cart total above this gets FREE delivery)',
+    category: 'store',
+  },
+  free_shipping_min_items: {
+    value: '0',
+    label: 'Free Delivery Minimum Product Count (e.g. 2 for free delivery on 2+ products, 0 to disable)',
     category: 'store',
   },
 };

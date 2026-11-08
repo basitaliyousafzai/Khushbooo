@@ -8,7 +8,16 @@ import { placeOrder, formatOrderTrackingId } from '@/lib/data/orders';
 import confetti from 'canvas-confetti';
 
 export function CheckoutModal() {
-  const { cart, subtotal, isCheckoutOpen, setIsCheckoutOpen, clearCart } = useCart();
+  const {
+    cart,
+    subtotal,
+    deliveryFee,
+    isFreeShipping,
+    finalTotal,
+    isCheckoutOpen,
+    setIsCheckoutOpen,
+    clearCart,
+  } = useCart();
 
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
@@ -23,16 +32,15 @@ export function CheckoutModal() {
   const [placedOrder, setPlacedOrder] = useState<{
     order_id: string;
     order_number: number;
+    subtotal: number;
+    deliveryFee: number;
+    isFreeShipping: boolean;
     total: number;
     customer_name: string;
     items: any[];
   } | null>(null);
 
   if (!isCheckoutOpen) return null;
-
-  const freeShippingThreshold = 4999;
-  const shippingFee = subtotal >= freeShippingThreshold ? 0 : 250;
-  const finalTotal = subtotal + shippingFee;
 
   const popularCities = ['Karachi', 'Lahore', 'Islamabad', 'Rawalpindi', 'Peshawar', 'Faisalabad', 'Multan', 'Sialkot', 'Quetta'];
 
@@ -53,13 +61,20 @@ export function CheckoutModal() {
     setLoading(true);
 
     try {
+      const shippingNote = isFreeShipping
+        ? '[Delivery: FREE]'
+        : `[Delivery: Rs. ${deliveryFee} | Subtotal: Rs. ${subtotal}]`;
+      const combinedNotes = orderNotes.trim()
+        ? `${shippingNote} ${orderNotes.trim()}`
+        : shippingNote;
+
       const orderPayload = {
         customer_name: fullName.trim(),
         customer_phone: phone.trim(),
         customer_email: email.trim() || undefined,
         shipping_address: address.trim(),
         city: city.trim(),
-        order_notes: orderNotes.trim() || undefined,
+        order_notes: combinedNotes,
         total_amount: finalTotal,
         items: cart.map((item) => ({
           product_id: item.product.id,
@@ -86,6 +101,9 @@ export function CheckoutModal() {
       setPlacedOrder({
         order_id: result.order_id || 'ord-confirmed',
         order_number: result.order_number || Math.floor(1000 + Math.random() * 9000),
+        subtotal,
+        deliveryFee,
+        isFreeShipping,
         total: finalTotal,
         customer_name: fullName.trim(),
         items: [...cart],
@@ -199,8 +217,21 @@ export function CheckoutModal() {
                 ))}
               </div>
 
-              <div className="pt-3 border-t border-gold/15 flex justify-between font-serif text-base text-white">
-                <span>Total Due on Delivery</span>
+              <div className="pt-3 border-t border-gold/15 space-y-1.5 text-xs font-sans">
+                <div className="flex justify-between text-champagne/70">
+                  <span>Items Subtotal</span>
+                  <span>Rs. {placedOrder.subtotal.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between text-champagne/70">
+                  <span>Nationwide Courier Delivery</span>
+                  <span className={placedOrder.isFreeShipping ? 'text-emerald-400 font-semibold' : 'text-gold'}>
+                    {placedOrder.isFreeShipping ? 'FREE' : `Rs. ${placedOrder.deliveryFee.toLocaleString()}`}
+                  </span>
+                </div>
+              </div>
+
+              <div className="pt-2 border-t border-gold/15 flex justify-between font-serif text-base text-white">
+                <span>Total Due on Delivery (COD)</span>
                 <span className="text-gold font-bold">
                   Rs. {placedOrder.total.toLocaleString()}
                 </span>
@@ -370,12 +401,14 @@ export function CheckoutModal() {
             {/* Pricing Summary */}
             <div className="p-4 rounded-xl bg-obsidian-500/70 border border-gold/15 space-y-2 text-xs font-sans">
               <div className="flex justify-between text-champagne/70">
-                <span>Bag Subtotal ({cart.length} items)</span>
+                <span>Bag Subtotal ({cart.length} {cart.length === 1 ? 'item' : 'items'})</span>
                 <span>Rs. {subtotal.toLocaleString()}</span>
               </div>
               <div className="flex justify-between text-champagne/70">
-                <span>Nationwide Courier Fee</span>
-                <span>{shippingFee === 0 ? 'COMPLIMENTARY' : `Rs. ${shippingFee}`}</span>
+                <span>Nationwide Courier Delivery</span>
+                <span className={isFreeShipping ? 'text-emerald-400 font-semibold' : 'text-gold'}>
+                  {isFreeShipping ? 'FREE (Special Offer Unlocked)' : `Rs. ${deliveryFee.toLocaleString()}`}
+                </span>
               </div>
               <div className="flex justify-between font-serif text-base text-white pt-2 border-t border-gold/15">
                 <span>Total Due Upon Delivery</span>
@@ -398,7 +431,7 @@ export function CheckoutModal() {
                 </>
               ) : (
                 <>
-                  <span>Confirm Cash on Delivery Order</span>
+                  <span>Confirm Cash on Delivery Order • Rs. {finalTotal.toLocaleString()}</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}

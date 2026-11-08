@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { AdminSidebar } from '@/components/admin/AdminSidebar';
+import { AdminGlobalOrderNotifier } from '@/components/admin/AdminGlobalOrderNotifier';
 import { getSupabaseBrowserClient, isSupabaseConfigured } from '@/lib/supabase/client';
 import { Loader2 } from 'lucide-react';
 
@@ -81,6 +82,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <div className="min-h-screen bg-obsidian flex flex-col md:flex-row">
       <AdminSidebar />
       <main className="flex-1 overflow-y-auto max-h-screen p-6 sm:p-10 bg-obsidian-600/30">
+        <AdminGlobalOrderNotifier />
         {children}
       </main>
     </div>

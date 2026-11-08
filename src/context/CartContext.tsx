@@ -3,6 +3,14 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { CartItem, Product } from '@/types';
 
+export interface ShippingConfig {
+  baseFee: number;
+  perItemFee: number;
+  calculationMode: 'flat' | 'per_item' | 'incremental';
+  freeShippingThreshold: number;
+  freeShippingMinItems: number;
+}
+
 interface CartContextType {
   cart: CartItem[];
   addToCart: (product: Product, quantity?: number) => void;
@@ -11,11 +19,18 @@ interface CartContextType {
   clearCart: () => void;
   totalItems: number;
   subtotal: number;
+  deliveryFee: number;
+  isFreeShipping: boolean;
+  freeShippingThreshold: number;
+  amountNeededForFreeShipping: number;
+  finalTotal: number;
+  shippingConfig: ShippingConfig;
   isCartOpen: boolean;
   setIsCartOpen: (open: boolean) => void;
   isCheckoutOpen: boolean;
   setIsCheckoutOpen: (open: boolean) => void;
   buyNow: (product: Product) => void;
+  refreshShippingConfig: () => Promise<void>;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -25,6 +40,43 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [shippingConfig, setShippingConfig] = useState<ShippingConfig>({
+    baseFee: 250,
+    perItemFee: 0,
+    calculationMode: 'flat',
+    freeShippingThreshold: 4999,
+    freeShippingMinItems: 0,
+  });
+
+  // Fetch dynamic delivery charges and threshold set by admin
+  const refreshShippingConfig = async () => {
+    try {
+      const res = await fetch('/api/admin/content', { cache: 'no-store' });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.items && Array.isArray(data.items)) {
+          const contentMap: Record<string, string> = {};
+          data.items.forEach((item: any) => {
+            contentMap[item.key] = item.value;
+          });
+
+          setShippingConfig({
+            baseFee: Number(contentMap.shipping_fee) || 250,
+            perItemFee: Number(contentMap.shipping_fee_per_item) || 0,
+            calculationMode: (contentMap.shipping_calculation_mode as any) || 'flat',
+            freeShippingThreshold: Number(contentMap.free_shipping_threshold) || 4999,
+            freeShippingMinItems: Number(contentMap.free_shipping_min_items) || 0,
+          });
+        }
+      }
+    } catch (e) {
+      // Use fallback defaults
+    }
+  };
+
+  useEffect(() => {
+    refreshShippingConfig();
+  }, []);
 
   // Load cart from localStorage
   useEffect(() => {
@@ -102,6 +154,25 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     return sum + price * item.quantity;
   }, 0);
 
+  // Dynamic delivery calculation according to Admin settings
+  const isQualifiedByThreshold = shippingConfig.freeShippingThreshold > 0 && subtotal >= shippingConfig.freeShippingThreshold;
+  const isQualifiedByItems = shippingConfig.freeShippingMinItems > 0 && totalItems >= shippingConfig.freeShippingMinItems;
+  const isFreeShipping = totalItems > 0 && (isQualifiedByThreshold || isQualifiedByItems);
+
+  let deliveryFee = 0;
+  if (totalItems > 0 && !isFreeShipping) {
+    if (shippingConfig.calculationMode === 'per_item') {
+      deliveryFee = shippingConfig.baseFee * totalItems;
+    } else if (shippingConfig.calculationMode === 'incremental') {
+      deliveryFee = shippingConfig.baseFee + Math.max(0, totalItems - 1) * shippingConfig.perItemFee;
+    } else {
+      deliveryFee = shippingConfig.baseFee;
+    }
+  }
+
+  const finalTotal = subtotal + deliveryFee;
+  const amountNeededForFreeShipping = Math.max(0, shippingConfig.freeShippingThreshold - subtotal);
+
   return (
     <CartContext.Provider
       value={{
@@ -112,11 +183,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         clearCart,
         totalItems,
         subtotal,
+        deliveryFee,
+        isFreeShipping,
+        freeShippingThreshold: shippingConfig.freeShippingThreshold,
+        amountNeededForFreeShipping,
+        finalTotal,
+        shippingConfig,
         isCartOpen,
         setIsCartOpen,
         isCheckoutOpen,
         setIsCheckoutOpen,
         buyNow,
+        refreshShippingConfig,
       }}
     >
       {children}
