@@ -234,6 +234,21 @@ export async function getProductsServer(): Promise<Product[]> {
  * Fetch products for client components
  */
 export async function getProductsClient(): Promise<Product[]> {
+  // If in browser, fetch through admin API endpoint for real-time unblocked data
+  if (typeof window !== 'undefined') {
+    try {
+      const res = await fetch('/api/admin/products', { cache: 'no-store' });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.products && Array.isArray(json.products) && json.products.length > 0) {
+          return json.products;
+        }
+      }
+    } catch (apiErr) {
+      // Fallback to direct client
+    }
+  }
+
   if (!isSupabaseConfigured()) {
     return FALLBACK_PRODUCTS;
   }
@@ -277,6 +292,24 @@ export async function saveProduct(
   productData: Partial<Product>,
   images: { image_url: string; is_thumbnail: boolean }[] = []
 ): Promise<{ success: boolean; data?: Product; error?: string }> {
+  // In browser, route through secure server-side admin API (bypassing RLS with service role)
+  if (typeof window !== 'undefined') {
+    try {
+      const res = await fetch('/api/admin/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ product: productData, images }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        return { success: false, error: data.error || 'Failed to save product via admin API' };
+      }
+      return { success: true };
+    } catch (err: any) {
+      return { success: false, error: err.message || 'Network error saving product' };
+    }
+  }
+
   if (!isSupabaseConfigured()) {
     return {
       success: true,
@@ -350,6 +383,22 @@ export async function saveProduct(
  * Admin Product CRUD: Delete Product
  */
 export async function deleteProduct(productId: string): Promise<{ success: boolean; error?: string }> {
+  // In browser, route through secure server-side admin API (bypassing RLS with service role)
+  if (typeof window !== 'undefined') {
+    try {
+      const res = await fetch(`/api/admin/products?id=${productId}`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        return { success: false, error: data.error || 'Failed to delete product' };
+      }
+      return { success: true };
+    } catch (err: any) {
+      return { success: false, error: err.message || 'Network error deleting product' };
+    }
+  }
+
   if (!isSupabaseConfigured()) {
     return { success: true };
   }

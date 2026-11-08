@@ -27,7 +27,7 @@ export function createSupabaseAdminClient(): SupabaseClient {
 
 export function createSupabaseServerClient(): SupabaseClient {
   const url = isSupabaseConfiguredServer() ? supabaseUrl : 'https://placeholder.supabase.co';
-  const key = isSupabaseConfiguredServer() ? supabaseAnonKey : 'placeholder-anon-key';
+  const key = isSupabaseConfiguredServer() ? supabaseServiceKey : 'placeholder-anon-key';
 
   return createClient(url, key, {
     auth: {

@@ -196,6 +196,19 @@ const LOCAL_STORAGE_KEY = 'khushbooo_background_scenes_v1';
 export async function getBackgroundScenes(): Promise<BackgroundScene[]> {
   if (typeof window !== 'undefined') {
     try {
+      const res = await fetch('/api/admin/backgrounds', { cache: 'no-store' });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.scenes && Array.isArray(json.scenes) && json.scenes.length > 0) {
+          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(json.scenes));
+          return json.scenes;
+        }
+      }
+    } catch (e) {
+      // Fall through to localStorage fallback
+    }
+
+    try {
       const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (stored) {
         return JSON.parse(stored);
@@ -318,6 +331,23 @@ export async function saveBackgroundScene(
     }
 
     // 2. Persist to Supabase if configured
+    if (typeof window !== 'undefined') {
+      try {
+        const res = await fetch('/api/admin/backgrounds', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ scene }),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          return { success: false, error: data.error || 'Failed to save background scene' };
+        }
+        return { success: true };
+      } catch (err: any) {
+        return { success: false, error: err?.message || 'Network error saving background scene' };
+      }
+    }
+
     if (isSupabaseConfigured()) {
       const supabase = getSupabaseBrowserClient();
       const payload: any = {
@@ -419,6 +449,7 @@ export async function deleteBackgroundScene(
       const current = await getBackgroundScenes();
       const filtered = current.filter((s) => s.id !== sceneId);
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(filtered));
+      await fetch(`/api/admin/backgrounds?id=${sceneId}`, { method: 'DELETE' });
     } catch (e) {}
   }
 

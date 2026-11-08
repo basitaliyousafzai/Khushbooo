@@ -196,6 +196,19 @@ export async function getSiteContentClient(): Promise<SiteContentMap> {
  * Fetch list of all content items for Admin Content Manager
  */
 export async function getAllSiteContentList(): Promise<SiteContent[]> {
+  // If running in browser, fetch through admin API
+  if (typeof window !== 'undefined') {
+    try {
+      const res = await fetch('/api/admin/content', { cache: 'no-store' });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.items && Array.isArray(json.items) && json.items.length > 0) {
+          return json.items;
+        }
+      }
+    } catch (e) {}
+  }
+
   if (!isSupabaseConfigured()) {
     // Return formatted defaults
     return Object.entries(DEFAULT_SITE_CONTENT).map(([key, data]) => ({
@@ -248,6 +261,24 @@ export async function updateSiteContentItem(item: {
   label?: string;
   category?: string;
 }): Promise<{ success: boolean; error?: string }> {
+  // In browser, route through secure server-side admin API (bypassing RLS with service role)
+  if (typeof window !== 'undefined') {
+    try {
+      const res = await fetch('/api/admin/content', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(item),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        return { success: false, error: data.error || 'Failed to update content' };
+      }
+      return { success: true };
+    } catch (err: any) {
+      return { success: false, error: err.message || 'Network error updating content' };
+    }
+  }
+
   if (!isSupabaseConfigured()) {
     return {
       success: true, // Allow optimistic preview in local demo

@@ -12,8 +12,9 @@ import { Footer } from '@/components/layout/Footer';
 import { MobileStickyDock } from '@/components/storefront/MobileStickyDock';
 import { DynamicBackgroundRenderer } from '@/components/canvas/DynamicBackgroundRenderer';
 
-// Revalidate every 60 seconds (or on-demand)
-export const revalidate = 60;
+// Ensure live storefront updates immediately whenever admin changes prices, products, or content
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function HomePage() {
   // Fetch dynamic content and products from Supabase
