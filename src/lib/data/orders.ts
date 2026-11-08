@@ -194,6 +194,22 @@ export async function placeOrder(orderData: {
  * Fetch all orders for Admin Order Dispatch Manager
  */
 export async function getOrders(filterStatus?: OrderStatus | 'All'): Promise<Order[]> {
+  // If running on client, fetch via secure Admin API endpoint (bypasses RLS)
+  if (typeof window !== 'undefined') {
+    try {
+      const url = `/api/admin/orders?status=${encodeURIComponent(filterStatus || 'All')}`;
+      const res = await fetch(url, { cache: 'no-store' });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.orders && Array.isArray(json.orders)) {
+          return json.orders;
+        }
+      }
+    } catch (apiErr) {
+      console.warn('API /api/admin/orders fetch failed, falling back to direct client:', apiErr);
+    }
+  }
+
   if (!isSupabaseConfigured()) {
     if (filterStatus && filterStatus !== 'All') {
       return FALLBACK_ORDERS.filter((o) => o.status === filterStatus);
@@ -213,7 +229,7 @@ export async function getOrders(filterStatus?: OrderStatus | 'All'): Promise<Ord
     }
 
     const { data, error } = await query;
-    if (error || !data) {
+    if (error || !data || data.length === 0) {
       return FALLBACK_ORDERS;
     }
 
@@ -236,6 +252,23 @@ export async function updateOrderStatus(
   status: OrderStatus,
   courierDetails?: { courier_name: string; courier_tracking_id: string }
 ): Promise<{ success: boolean; error?: string }> {
+  // If on client, update via secure Admin API route
+  if (typeof window !== 'undefined') {
+    try {
+      const res = await fetch('/api/admin/orders', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId, status, courierDetails }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        return { success: true };
+      }
+    } catch (e: any) {
+      console.warn('API update failed, trying direct client:', e);
+    }
+  }
+
   if (!isSupabaseConfigured()) {
     return { success: true };
   }

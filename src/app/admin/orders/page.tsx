@@ -23,25 +23,63 @@ export default function OrderDispatchPage() {
   const [filter, setFilter] = useState<OrderStatus | 'All'>('All');
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [newOrderAlert, setNewOrderAlert] = useState<string | null>(null);
+  const lastOrderCountRef = React.useRef<number | null>(null);
 
   // Modals state
   const [dispatchOrder, setDispatchOrder] = useState<Order | null>(null);
   const [slipOrder, setSlipOrder] = useState<Order | null>(null);
 
-  const fetchOrdersData = async () => {
-    setLoading(true);
+  const fetchOrdersData = async (isBackground = false) => {
+    if (!isBackground) setLoading(true);
+    setIsRefreshing(true);
     try {
       const data = await getOrders(filter === 'All' ? undefined : filter);
+      
+      // Detect newly arrived orders for instant alert
+      if (lastOrderCountRef.current !== null && data.length > lastOrderCountRef.current) {
+        const newest = data[0];
+        setNewOrderAlert(`🎉 New Order #${newest.order_number} just received from ${newest.customer_name} (${newest.city}) — Rs. ${newest.total_amount.toLocaleString()}`);
+        
+        // Play subtle luxury notification tone if audio context available
+        try {
+          const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+          osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.15); // A5
+          gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.35);
+        } catch {
+          // Audio autoplay restrictions
+        }
+      }
+
+      lastOrderCountRef.current = data.length;
       setOrders(data);
     } catch (err) {
       console.error('Error fetching orders:', err);
     } finally {
-      setLoading(false);
+      if (!isBackground) setLoading(false);
+      setIsRefreshing(false);
     }
   };
 
   useEffect(() => {
     fetchOrdersData();
+
+    // Instant Real-Time Live Stream: Poll every 4 seconds for new customer orders
+    const interval = setInterval(() => {
+      fetchOrdersData(true);
+    }, 4000);
+
+    return () => clearInterval(interval);
   }, [filter]);
 
   // Handle direct status change
@@ -86,13 +124,35 @@ export default function OrderDispatchPage() {
 
   return (
     <div className="space-y-8">
+
+      {/* New Instant Order Alert Toast */}
+      {newOrderAlert && (
+        <div className="p-4 rounded-2xl bg-gold/15 border-2 border-gold text-champagne text-xs sm:text-sm font-sans flex items-center justify-between shadow-2xl shadow-gold/20 animate-bounce">
+          <div className="flex items-center gap-2.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-gold animate-ping" />
+            <span className="font-semibold text-white">{newOrderAlert}</span>
+          </div>
+          <button
+            onClick={() => setNewOrderAlert(null)}
+            className="text-xs uppercase tracking-wider text-gold hover:text-white px-2 py-1 rounded-lg bg-obsidian-400 border border-gold/30"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
       
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <span className="text-xs uppercase tracking-widest text-gold font-sans">
-            Logistics & Fulfillment
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-xs uppercase tracking-widest text-gold font-sans">
+              Logistics & Fulfillment
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 text-[10px] uppercase tracking-wider font-sans">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span>Live Stream Active</span>
+            </span>
+          </div>
           <h1 className="font-serif text-3xl sm:text-4xl text-white">
             Order Dispatch Manager
           </h1>
@@ -102,10 +162,12 @@ export default function OrderDispatchPage() {
         </div>
 
         <button
-          onClick={fetchOrdersData}
-          className="px-4 py-2 rounded-full border border-gold/30 hover:border-gold text-champagne text-xs uppercase tracking-wider font-sans self-start sm:self-auto"
+          onClick={() => fetchOrdersData(false)}
+          disabled={isRefreshing}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gold/30 hover:border-gold text-champagne text-xs uppercase tracking-wider font-sans self-start sm:self-auto bg-obsidian-400/80 transition-all hover:bg-obsidian-300"
         >
-          Refresh Feed
+          <Clock className={`w-3.5 h-3.5 text-gold ${isRefreshing ? 'animate-spin' : ''}`} />
+          <span>{isRefreshing ? 'Refreshing...' : 'Refresh Feed'}</span>
         </button>
       </div>
 
